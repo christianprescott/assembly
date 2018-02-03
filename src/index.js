@@ -4,8 +4,9 @@ import DragControls from './DragControls'
 class Component {
   clock = new THREE.Clock(false)
 
-  constructor () {
-    const renderer = new THREE.WebGLRenderer()
+  constructor (parent) {
+    const canvas = this._createCanvas(parent)
+    const renderer = new THREE.WebGLRenderer({ canvas })
 
     const scene = new THREE.Scene()
 
@@ -33,14 +34,12 @@ class Component {
     Object.assign(this, { renderer, scene, camera, cube, target })
   }
 
-  domElement () {
-    return this.renderer.domElement
-  }
-
   start () {
     this.clock.start()
     this._animate()
   }
+
+  // private
 
   _animate = () => {
     requestAnimationFrame(this._animate)
@@ -54,8 +53,38 @@ class Component {
   }
 
   _render () {
+    this._resize()
     const { renderer, scene, camera } = this
     renderer.render(scene, camera)
+  }
+
+  _resize () {
+    const { container, renderer, camera } = this
+    const width = container.clientWidth
+    const height = container.clientHeight
+    if (container.width != width || container.height != height) {
+      renderer.setSize(container.clientWidth, container.clientHeight, false)
+
+      camera.aspect = container.clientWidth / container.clientHeight;
+      camera.updateProjectionMatrix();
+    }
+  }
+
+  _createCanvas (parent) {
+    if (!(parent instanceof HTMLElement)) throw 'parent must be HTMLElement'
+
+    const container = document.createElement('div')
+    container.style.width = '100%'
+    container.style.height = '100%'
+    container.style.position = 'relative'
+
+    const canvas = document.createElement('canvas')
+    canvas.style.position = 'absolute'
+
+    container.appendChild(canvas)
+    parent.appendChild(container)
+    this.container = container
+    return canvas
   }
 
   _onDrag = (event) => {
@@ -69,6 +98,6 @@ class Component {
   }
 }
 
-const component = new Component()
+const parent = document.getElementById('container')
+const component = new Component(parent)
 component.start()
-document.body.appendChild(component.domElement())
