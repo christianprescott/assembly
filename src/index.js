@@ -28,6 +28,7 @@ class Component {
     scene.add(cube)
 
     const dragControls = new DragControls([cube], camera, renderer.domElement)
+    dragControls.addEventListener('drag', this._onDrag)
 
     Object.assign(this, { renderer, scene, camera, cube, target })
   }
@@ -55,6 +56,16 @@ class Component {
   _render () {
     const { renderer, scene, camera } = this
     renderer.render(scene, camera)
+  }
+
+  _onDrag = (event) => {
+    const target = new THREE.Vector3(0, 0, 1).add(this.target.position)
+    const dist = target.sub(event.object.position).length()
+    if (dist < 0.05) {
+      this.cube.material.color = new THREE.Color(0x00ff00)
+    } else {
+      this.cube.material.color = new THREE.Color(0xff0000)
+    }
   }
 }
 
