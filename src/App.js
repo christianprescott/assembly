@@ -17,13 +17,13 @@ export default class App {
 
     const target = new THREE.Mesh(
       new THREE.BoxGeometry(1, 1, 1),
-      new THREE.MeshBasicMaterial({ color: 0x808080 })
+      new THREE.MeshBasicMaterial({ color: 0x808080 }),
     )
     scene.add(target)
 
     const cube = new THREE.Mesh(
       new THREE.BoxGeometry(1, 1, 1),
-      new THREE.MeshBasicMaterial({ color: 0xff0000 })
+      new THREE.MeshBasicMaterial({ color: 0xff0000 }),
     )
     cube.position.set(3, 0, 0)
     scene.add(cube)
@@ -43,13 +43,7 @@ export default class App {
 
   _animate = () => {
     requestAnimationFrame(this._animate)
-    const dt = this.clock.getDelta()
-    this._update(dt)
     this._render()
-  }
-
-  _update (dt) {
-    this.target.rotation.z += 1.0 * dt
   }
 
   _render () {
@@ -57,7 +51,7 @@ export default class App {
     renderer.render(scene, camera)
   }
 
-  _onDrag = (event) => {
+  static _onDrag (event) {
     const target = new THREE.Vector3(0, 0, 1).add(this.target.position)
     const dist = target.sub(event.object.position).length()
     if (dist < 0.05) {

@@ -1,4 +1,5 @@
 // Adapted from https://github.com/mrdoob/three.js/blob/master/examples/js/controls/DragControls.js
+/* eslint-disable */
 /*
  * @author zz85 / https://github.com/zz85
  * @author mrdoob / http://mrdoob.com

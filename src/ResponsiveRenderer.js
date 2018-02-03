@@ -1,7 +1,7 @@
 import { WebGLRenderer } from 'three'
 
 function _createCanvas (parent) {
-  if (!(parent instanceof HTMLElement)) throw 'parent must be HTMLElement'
+  if (!(parent instanceof HTMLElement)) throw new Error('parent must be HTMLElement')
 
   const container = document.createElement('div')
   container.style.width = '100%'
@@ -37,7 +37,7 @@ export default class ResponsiveRenderer extends WebGLRenderer {
   _resize (container, camera) {
     const width = container.clientWidth
     const height = container.clientHeight
-    if (container.width != width || container.height != height) {
+    if (container.width !== width || container.height !== height) {
       this.setSize(container.clientWidth, container.clientHeight, false)
 
       camera.aspect = container.clientWidth / container.clientHeight;
