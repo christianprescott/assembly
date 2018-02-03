@@ -1,12 +1,12 @@
 import * as THREE from 'three'
 import DragControls from './DragControls'
+import ResponsiveRenderer from './ResponsiveRenderer'
 
 class Component {
   clock = new THREE.Clock(false)
 
   constructor (parent) {
-    const canvas = this._createCanvas(parent)
-    const renderer = new THREE.WebGLRenderer({ canvas })
+    const renderer = new ResponsiveRenderer(parent)
 
     const scene = new THREE.Scene()
 
@@ -53,38 +53,8 @@ class Component {
   }
 
   _render () {
-    this._resize()
     const { renderer, scene, camera } = this
     renderer.render(scene, camera)
-  }
-
-  _resize () {
-    const { container, renderer, camera } = this
-    const width = container.clientWidth
-    const height = container.clientHeight
-    if (container.width != width || container.height != height) {
-      renderer.setSize(container.clientWidth, container.clientHeight, false)
-
-      camera.aspect = container.clientWidth / container.clientHeight;
-      camera.updateProjectionMatrix();
-    }
-  }
-
-  _createCanvas (parent) {
-    if (!(parent instanceof HTMLElement)) throw 'parent must be HTMLElement'
-
-    const container = document.createElement('div')
-    container.style.width = '100%'
-    container.style.height = '100%'
-    container.style.position = 'relative'
-
-    const canvas = document.createElement('canvas')
-    canvas.style.position = 'absolute'
-
-    container.appendChild(canvas)
-    parent.appendChild(container)
-    this.container = container
-    return canvas
   }
 
   _onDrag = (event) => {
