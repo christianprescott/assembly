@@ -1,4 +1,4 @@
-import { Clock, Color, Scene, PerspectiveCamera } from 'three'
+import { Clock, Scene, PerspectiveCamera } from 'three'
 import DragControls from './DragControls'
 import ResponsiveRenderer from './ResponsiveRenderer'
 import Assembly from './Assembly'
@@ -45,11 +45,6 @@ export default class App {
 
   static _onDrag (event) {
     const component = event.object
-    const dist = component.target.distanceTo(component.position)
-    if (dist < 0.05) {
-      component.material.color = new Color(0x00ff00)
-    } else {
-      component.material.color = new Color(0xff0000)
-    }
+    component.testLinks()
   }
 }
