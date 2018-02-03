@@ -2,7 +2,7 @@ import * as THREE from 'three'
 import DragControls from './DragControls'
 import ResponsiveRenderer from './ResponsiveRenderer'
 
-class Component {
+export default class App {
   clock = new THREE.Clock(false)
 
   constructor (parent) {
@@ -67,7 +67,3 @@ class Component {
     }
   }
 }
-
-const parent = document.getElementById('container')
-const component = new Component(parent)
-component.start()
