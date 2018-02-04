@@ -1,4 +1,5 @@
-import { Clock, Scene, PerspectiveCamera } from 'three'
+import { Clock, PerspectiveCamera } from 'three'
+import buildScene from './buildScene'
 import DragControls from './DragControls'
 import ResponsiveRenderer from './ResponsiveRenderer'
 
@@ -7,13 +8,10 @@ export default class App {
 
   constructor (parent) {
     const renderer = new ResponsiveRenderer(parent)
-
-    const scene = new Scene()
-
     const camera = new PerspectiveCamera(45, 1, 1, 1000)
     camera.position.set(0, -10, 0)
     camera.rotation.set(Math.PI / 2, 0, 0)
-    scene.add(camera)
+    const scene = buildScene()
 
     Object.assign(this, { camera, renderer, scene })
   }

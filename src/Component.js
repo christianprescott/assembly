@@ -1,7 +1,7 @@
-import { BoxGeometry, Mesh, MeshBasicMaterial } from 'three'
+import { BoxGeometry, Mesh, MeshToonMaterial } from 'three'
 
-const MAT_LINKED = new MeshBasicMaterial({ color: 0x00ff00 })
-const MAT_UNLINKED = new MeshBasicMaterial({ color: 0xff0000 })
+const MAT_LINKED = new MeshToonMaterial({ color: 0x00ff00 })
+const MAT_UNLINKED = new MeshToonMaterial({ color: 0xff0000 })
 
 export default class Component extends Mesh {
   constructor () {
