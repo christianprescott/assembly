@@ -1,7 +1,6 @@
 import { Clock, Scene, PerspectiveCamera } from 'three'
 import DragControls from './DragControls'
 import ResponsiveRenderer from './ResponsiveRenderer'
-import Assembly from './Assembly'
 
 export default class App {
   clock = new Clock(false)
@@ -16,14 +15,16 @@ export default class App {
     camera.rotation.set(Math.PI / 2, 0, 0)
     scene.add(camera)
 
-    const assembly = new Assembly()
+    Object.assign(this, { camera, renderer, scene })
+  }
+
+  // TODO: clear previous contents, controls
+  load (assembly) {
+    const { camera, scene, renderer } = this
     scene.add(...assembly.fixtures)
     scene.add(...assembly.components)
-
     const dragControls = new DragControls(assembly.components, camera, renderer.domElement)
     dragControls.addEventListener('drag', App._onDrag)
-
-    Object.assign(this, { renderer, scene, camera })
   }
 
   start () {
