@@ -11,6 +11,7 @@ jspm_packages/
 
 # Webpack build
 dist/*.js
+dist/*.json
 
 # Optional npm cache directory
 .npm

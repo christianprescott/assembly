@@ -21,6 +21,13 @@ module.exports = {
           },
           'eslint-loader'
         ]
+      },
+      // three/examples/ do not support modules. Using imports-loader, provide
+      // `three` as THREE to the example to define its contents, then import
+      // from `three`.
+      {
+        test: /three\/examples\/js\/.*\.js$/,
+        use: 'imports-loader?THREE=three'
       }
     ]
   }
