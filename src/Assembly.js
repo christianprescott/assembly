@@ -29,8 +29,9 @@ export default class Assembly {
       meshes[name] = component
       return component
     })
-    config.links.forEach(([nameA, nameB]) => {
-      // TODO: ensure both are not fixtures
+    config.links.forEach((link) => {
+      if (link.length !== 2) throw new Error('exactly two meshes must be linked')
+      const [nameA, nameB] = link
       // TODO: I think this only works cause meshes are offset from object
       // position. Might need repair.
       Link.create(meshes[nameA], meshes[nameB], new Vector3(0, 0, 0))
