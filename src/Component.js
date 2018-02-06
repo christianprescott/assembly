@@ -1,12 +1,13 @@
-import { BoxGeometry, Mesh, MeshToonMaterial } from 'three'
+import { Mesh, MeshToonMaterial } from 'three'
 
 const MAT_LINKED = new MeshToonMaterial({ color: 0x00ff00 })
 const MAT_UNLINKED = new MeshToonMaterial({ color: 0xff0000 })
 
 export default class Component extends Mesh {
-  constructor () {
+  constructor (geometry) {
+    if (!geometry) throw new Error('geometry must be present')
     super(
-      new BoxGeometry(1, 1, 1),
+      geometry,
       MAT_UNLINKED,
     )
     this.links = []
@@ -14,19 +15,18 @@ export default class Component extends Mesh {
 
   testLinks () {
     const meshes = this.links.reduce((acc, l) => {
-      acc.add(l.meshA)
-      acc.add(l.meshB)
+      l.meshes().forEach(m => acc.add(m))
       return acc
     }, new Set())
 
-    meshes.forEach((mesh) => {
-      if (Array.isArray(mesh.links)) {
-        const linked = mesh.links.find((l) => {
+    Array.from(meshes.values())
+      .filter(m => m instanceof Component)
+      .forEach((component) => {
+        const linked = component.links.find((l) => {
           const dist = l.getDistance()
           return dist < 0.05
         })
-        mesh.material = linked ? MAT_LINKED : MAT_UNLINKED
-      }
-    })
+        component.material = linked ? MAT_LINKED : MAT_UNLINKED
+      })
   }
 }

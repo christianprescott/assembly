@@ -19,15 +19,13 @@ export default class Assembly {
 
     // TODO: ensure presence in only one type, or just infer components from !fixtures
     const fixtures = config.fixtures.map((name) => {
-      const fixture = new Fixture()
       // TODO: ensure name present in meshes
-      fixture.geometry = meshes[name].geometry
+      const fixture = new Fixture(meshes[name].geometry)
       meshes[name] = fixture
       return fixture
     })
     const components = config.components.map((name) => {
-      const component = new Component()
-      component.geometry = meshes[name].geometry
+      const component = new Component(meshes[name].geometry)
       meshes[name] = component
       return component
     })

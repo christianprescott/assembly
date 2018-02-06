@@ -1,9 +1,10 @@
-import { BoxGeometry, Mesh, MeshBasicMaterial } from 'three'
+import { Mesh, MeshBasicMaterial } from 'three'
 
 export default class Fixture extends Mesh {
-  constructor () {
+  constructor (geometry) {
+    if (!geometry) throw new Error('geometry must be present')
     super(
-      new BoxGeometry(1, 1, 1),
+      geometry,
       new MeshBasicMaterial({ color: 0x808080 }),
     )
   }
