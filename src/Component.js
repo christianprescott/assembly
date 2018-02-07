@@ -11,6 +11,8 @@ export default class Component extends Mesh {
       MAT_UNLINKED,
     )
     this.links = []
+    this.body = null
+    this.dragBody = null
   }
 
   testLinks () {

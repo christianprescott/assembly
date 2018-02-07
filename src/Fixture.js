@@ -7,5 +7,6 @@ export default class Fixture extends Mesh {
       geometry,
       new MeshBasicMaterial({ color: 0x808080 }),
     )
+    this.body = null
   }
 }

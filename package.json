@@ -10,6 +10,7 @@
   "author": "me@christianprescott.com",
   "license": "ISC",
   "dependencies": {
+    "cannon": "github:schteppe/cannon.js",
     "three": "^0.89.0"
   },
   "devDependencies": {
