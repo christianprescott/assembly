@@ -18,15 +18,14 @@ Wavefront OBJ definition of geometry. Objects must be uniquely named. Objects
 should be positioned so the Assembly is complete and each component is in the
 desired position.
 
-### `components: String[]`
-
-Names of objects to be added to the scene as Components. Will be separated from
-fixtures and have positions shuffled.
+Rigid bodies are determined from geometry bounding box.
 
 ### `fixtures: String[]`
 
 Names of objects to be added to the scene as Fixtures. Will maintain their
 position in the scene and relative to other fixtures. Can not be repositioned.
+
+Remaining objects will be added to the scene as Components.
 
 ### `links: String[][]`
 

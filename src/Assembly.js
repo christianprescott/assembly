@@ -1,5 +1,5 @@
 import 'three/examples/js/loaders/OBJLoader'
-import { OBJLoader, Vector3 } from 'three'
+import { OBJLoader } from 'three'
 import Component from './Component'
 import Fixture from './Fixture'
 import Link from './Link'
@@ -13,30 +13,28 @@ export default class Assembly {
     // TODO: ensure no duplicate object names
     // TODO: ensure name present
     const meshes = group.children.reduce((acc, m) => {
-      acc[m.name] = m
+      const { name, geometry } = m
+      const Type = config.fixtures.includes(name) ? Fixture : Component
+      const mesh = new Type(geometry)
+      mesh.geometry.computeBoundingBox()
+      const box = mesh.geometry.boundingBox.getCenter()
+      mesh.geometry.translate(...box.toArray().map(v => v * -1))
+      mesh.position.copy(box)
+      acc[name] = mesh
       return acc
     }, {})
 
-    // TODO: ensure presence in only one type, or just infer components from !fixtures
-    const fixtures = config.fixtures.map((name) => {
-      // TODO: ensure name present in meshes
-      const fixture = new Fixture(meshes[name].geometry)
-      meshes[name] = fixture
-      return fixture
-    })
-    const components = config.components.map((name) => {
-      const component = new Component(meshes[name].geometry)
-      meshes[name] = component
-      return component
-    })
     config.links.forEach((link) => {
       if (link.length !== 2) throw new Error('exactly two meshes must be linked')
       const [nameA, nameB] = link
-      // TODO: I think this only works cause meshes are offset from object
-      // position. Might need repair.
-      Link.create(meshes[nameA], meshes[nameB], new Vector3(0, 0, 0))
+      Link.create(meshes[nameA], meshes[nameB])
     })
 
+    const { fixtures, components } = Object.entries(meshes).reduce((acc, [name, m]) => {
+      const collection = config.fixtures.includes(name) ? acc.fixtures : acc.components
+      collection.push(m)
+      return acc
+    }, { fixtures: [], components: [] })
     return new Assembly(fixtures, components)
   }
 

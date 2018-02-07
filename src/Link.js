@@ -1,8 +1,8 @@
-import { Mesh, Object3D, Vector3 } from 'three'
+import { Mesh, Object3D } from 'three'
 import Component from './Component'
 
 export default class Link extends Object3D {
-  static create (meshA, meshB, offset) {
+  static create (meshA, meshB) {
     const meshes = [meshA, meshB]
     if (!meshes.every(m => m instanceof Mesh)) throw new Error('meshes must be present')
     if (meshA === meshB) throw new Error('cannot link mesh to itself')
@@ -14,16 +14,14 @@ export default class Link extends Object3D {
     const notLinked = component.links.every(l => !l.meshes().includes(other))
     if (!notLinked) throw new Error('these meshes are already linked')
 
-    if (!(offset instanceof Vector3)) throw new Error('offset must be present')
-
-    return new Link(meshA, meshB, offset)
+    return new Link(meshA, meshB)
   }
 
-  constructor (meshA, meshB, offset) {
+  constructor (meshA, meshB) {
     super()
     Object.assign(this, { meshA, meshB })
 
-    this.position.set(...offset.toArray())
+    this.position.subVectors(meshB.position, meshA.position)
     meshA.add(this)
 
     this.meshes()
