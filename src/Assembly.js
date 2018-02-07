@@ -10,10 +10,10 @@ export default class Assembly {
     // is not awesome
     const group = new OBJLoader().parse(config.obj)
 
-    // TODO: ensure no duplicate object names
-    // TODO: ensure name present
     const meshes = group.children.reduce((acc, m) => {
       const { name, geometry } = m
+      if (!name) throw new Error('mesh must have a name')
+      if (acc[name]) throw new Error(`duplicate mesh with name "${name}"`)
       const Type = config.fixtures.includes(name) ? Fixture : Component
       const mesh = new Type(geometry)
       mesh.geometry.computeBoundingBox()
