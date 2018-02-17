@@ -11,6 +11,7 @@ export default class App {
   constructor (parent) {
     const renderer = new ResponsiveRenderer(parent)
     const camera = new PerspectiveCamera(45, 1, 1, 1000)
+    camera.up.set(0, 0, 1)
     camera.position.set(0, -10, 0)
     camera.rotation.set(Math.PI / 2, 0, 0)
     const scene = buildScene()
