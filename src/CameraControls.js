@@ -59,7 +59,11 @@ export default class CameraControls {
   // The four arrow keys
   keys = { LEFT: 37, UP: 38, RIGHT: 39, BOTTOM: 40 }
   // Mouse buttons
-  mouseButtons = { ORBIT: MOUSE.LEFT, ZOOM: MOUSE.MIDDLE, PAN: MOUSE.RIGHT }
+  mouseButtons = {
+    ORBIT: MOUSE.RIGHT,
+    ZOOM: MOUSE.MIDDLE,
+    PAN: MOUSE.LEFT,
+  }
 
   // "target" sets the location of focus, where the object orbits around
   target = new Vector3()

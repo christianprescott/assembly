@@ -66,6 +66,7 @@ export default class App {
     const dragControls = new DragControls(assembly.components, camera, renderer.domElement)
     dragControls.addEventListener('drag', App._onDrag)
     const cameraControls = new CameraControls(camera, renderer.domElement)
+    cameraControls.enablePan = false
 
     this.assembly = assembly
   }
