@@ -1,59 +1,59 @@
 # Release Notes
 
 ## v0.1.0
-[x] Fixed camera
-[x] Fixed object
-[x] Drag and drop object
-[x] Recognize distance to target
+- [x] Fixed camera
+- [x] Fixed object
+- [x] Drag and drop object
+- [x] Recognize distance to target
 
 ## v0.2.0
-[x] renderer responsive to container or window
-[x] "assembly" defining fixtures, components, and targets
-[x] "fixtures" locked in place
-[x] Target relative to previous fixtures and components
+- [x] renderer responsive to container or window
+- [x] "assembly" defining fixtures, components, and targets
+- [x] "fixtures" locked in place
+- [x] Target relative to previous fixtures and components
 
 ## v0.3.0
-[x] Extract Assembly scene
-[x] Serializable assembly format
-[x] Basic lighting, toon materials
+- [x] Extract Assembly scene
+- [x] Serializable assembly format
+- [x] Basic lighting, toon materials
 
 ## v0.4.0
-[x] physics, drag collisions
-[x] camera control
+- [x] physics, drag collisions
+- [x] camera control
     right click drag to orbit
     camera stays z-up
-[ ] 3D input
+- [ ] 3D input
     left click drag to move along camera plane
     shift+left click drag to move across camera plane
     ctrl+left click drag to rotate
 
 ## v0.5.0
-[ ] Target rotation
-[ ] Margin of error for target position and rotation
-[ ] Revisit scene units, camera clipping
+- [ ] Target rotation
+- [ ] Margin of error for target position and rotation
+- [ ] Revisit scene units, camera clipping
 
 ## Backlog
-[ ] flow, see git stash https://flow.org/en/docs/getting-started/
-[ ] compound collisions
+- [ ] flow, see git stash https://flow.org/en/docs/getting-started/
+- [ ] compound collisions
     configure many body meshes per obj mesh
     identify meshes as one of
       box - 8 vertices, right angles
       sphere - all vertices (max - min) distance from center of bounding box
-[ ] shuffle components
-[ ] more camera control
+- [ ] shuffle components
+- [ ] more camera control
     WASD to translate
     snap to horizontal and vertical when released near those points
-[ ] fullscreen
-[ ] group linked components, additional grab handle appears for group
-[ ] physics, optional gravity
-[ ] constrain workspace, camera
-[ ] touch controls
-[ ] animation, indication for unplaced components
-[ ] component name tooltip
-[ ] toon outline
-[ ] materials, color
-[ ] Optional snap to position during drag or drag release
-[ ] "optional" links - accept one of several positions
+- [ ] fullscreen
+- [ ] group linked components, additional grab handle appears for group
+- [ ] physics, optional gravity
+- [ ] constrain workspace, camera
+- [ ] touch controls
+- [ ] animation, indication for unplaced components
+- [ ] component name tooltip
+- [ ] toon outline
+- [ ] materials, color
+- [ ] Optional snap to position during drag or drag release
+- [ ] "optional" links - accept one of several positions
 
 ## Notes
 
