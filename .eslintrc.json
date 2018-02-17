@@ -5,6 +5,7 @@
     "extends": "airbnb-base",
     "parser": "babel-eslint",
     "rules": {
+      "function-paren-newline": ["error", "consistent"],
       "no-param-reassign": "off",
       "no-underscore-dangle": "off",
       "object-curly-newline": ["error", { "consistent": true }],

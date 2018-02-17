@@ -2,6 +2,7 @@ import { Body, Box, PointToPointConstraint, Vec3, World } from 'cannon'
 import { Clock, PerspectiveCamera } from 'three'
 import buildScene from './buildScene'
 import DragControls from './DragControls'
+import CameraControls from './CameraControls'
 import ResponsiveRenderer from './ResponsiveRenderer'
 
 export default class App {
@@ -63,6 +64,8 @@ export default class App {
 
     const dragControls = new DragControls(assembly.components, camera, renderer.domElement)
     dragControls.addEventListener('drag', App._onDrag)
+    const cameraControls = new CameraControls(camera, renderer.domElement)
+
     this.assembly = assembly
   }
 
