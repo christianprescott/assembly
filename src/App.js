@@ -91,10 +91,12 @@ export default class App {
 
   _update (dt) {
     this.world.step(dt)
-    this.assembly && this.assembly.components.forEach((c) => {
-      c.position.copy(c.body.position)
-      c.quaternion.copy(c.body.quaternion)
-    })
+    if (this.assembly) {
+      this.assembly.components.forEach((c) => {
+        c.position.copy(c.body.position)
+        c.quaternion.copy(c.body.quaternion)
+      })
+    }
   }
 
   _render () {
