@@ -71,6 +71,15 @@ export default class DragControls {
     this.deactivate()
   }
 
+  handleDragEnd () {
+    if (this._selected) {
+      this.dispatchEvent({ type: 'dragend', object: this._selected })
+      this._selected = null
+    }
+
+    this._domElement.style.cursor = 'auto'
+  }
+
   onDocumentMouseMove = (event) => {
     event.preventDefault()
 
@@ -140,19 +149,12 @@ export default class DragControls {
 
   onDocumentMouseCancel = (event) => {
     event.preventDefault()
-
-    if (this._selected) {
-      this.dispatchEvent({ type: 'dragend', object: this._selected })
-
-      this._selected = null
-    }
-
-    this._domElement.style.cursor = 'auto'
+    this.handleDragEnd()
   }
 
   onDocumentTouchMove = (e) => {
     e.preventDefault()
-    const [event] = e.changedTouches
+    const [event] = e.touches
 
     const rect = this._domElement.getBoundingClientRect()
 
@@ -172,7 +174,11 @@ export default class DragControls {
 
   onDocumentTouchStart = (e) => {
     e.preventDefault()
-    const [event] = e.changedTouches
+    if (e.touches.length !== 1) {
+      this.handleDragEnd()
+      return
+    }
+    const [event] = e.touches
 
     const rect = this._domElement.getBoundingClientRect()
 
@@ -203,14 +209,7 @@ export default class DragControls {
 
   onDocumentTouchEnd = (event) => {
     event.preventDefault()
-
-    if (this._selected) {
-      this.dispatchEvent({ type: 'dragend', object: this._selected })
-
-      this._selected = null
-    }
-
-    this._domElement.style.cursor = 'auto'
+    this.handleDragEnd()
   }
 }
 
