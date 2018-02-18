@@ -4,7 +4,8 @@
 
 ```sh
 npm run build
-open dist/index.html
+cd dist && python -m SimpleHTTPServer 8080 # or whatever
+open http://localhost:8080
 ```
 
 ## Configuration

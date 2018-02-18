@@ -39,10 +39,16 @@
     <div id="container"></div>
     <script src="bundle.js"></script>
     <script>
-      const container = document.getElementById('container')
-      const app = new assembly.App(container)
-      app.load(assembly.Assembly.load(assembly.example))
-      app.start()
+      const request = new XMLHttpRequest()
+      request.open('GET', 'examples/bricks.json')
+      request.responseType = 'json'
+      request.onload = function () {
+        const container = document.getElementById('container')
+        const app = new assembly.App(container)
+        app.load(assembly.Assembly.load(request.response))
+        app.start()
+      }
+      request.send()
     </script>
   </body>
 </html>
