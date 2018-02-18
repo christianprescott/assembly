@@ -4,6 +4,7 @@ module.exports = {
   entry: './src/index.js',
   output: {
     filename: 'bundle.js',
+    library: 'assembly',
     path: path.resolve(__dirname, 'dist')
   },
   module: {

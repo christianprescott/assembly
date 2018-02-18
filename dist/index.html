@@ -38,5 +38,11 @@
     </p>
     <div id="container"></div>
     <script src="bundle.js"></script>
+    <script>
+      const container = document.getElementById('container')
+      const app = new assembly.App(container)
+      app.load(assembly.Assembly.load(assembly.example))
+      app.start()
+    </script>
   </body>
 </html>
