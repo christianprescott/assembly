@@ -578,20 +578,22 @@ export default class CameraControls {
     this.handleKeyDown(event)
   }
 
+  // TODO: distinguish two-finger rotate and dolly. May need to delay the state
+  // change until we can determine the action
   onTouchStart = (event) => {
     if (this.enabled === false) return
 
     switch (event.touches.length) {
-      case 1: // one-fingered touch: rotate
+      case 2: // one-fingered touch: rotate
         if (this.enableRotate === false) return
         this.handleTouchStartRotate(event)
         this.state = STATE.TOUCH_ROTATE
         break
-      case 2: // two-fingered touch: dolly
-        if (this.enableZoom === false) return
-        this.handleTouchStartDolly(event)
-        this.state = STATE.TOUCH_DOLLY
-        break
+      // case 2: // two-fingered touch: dolly
+      //   if (this.enableZoom === false) return
+      //   this.handleTouchStartDolly(event)
+      //   this.state = STATE.TOUCH_DOLLY
+      //   break
       case 3: // three-fingered touch: pan
         if (this.enablePan === false) return
         this.handleTouchStartPan(event)
@@ -612,16 +614,16 @@ export default class CameraControls {
     event.stopPropagation()
 
     switch (event.touches.length) {
-      case 1: // one-fingered touch: rotate
+      case 2: // one-fingered touch: rotate
         if (this.enableRotate === false) return
         if (this.state !== STATE.TOUCH_ROTATE) return; // is this needed?...
         this.handleTouchMoveRotate(event)
         break
-      case 2: // two-fingered touch: dolly
-        if (this.enableZoom === false) return
-        if (this.state !== STATE.TOUCH_DOLLY) return; // is this needed?...
-        this.handleTouchMoveDolly(event)
-        break
+      // case 2: // two-fingered touch: dolly
+      //   if (this.enableZoom === false) return
+      //   if (this.state !== STATE.TOUCH_DOLLY) return; // is this needed?...
+      //   this.handleTouchMoveDolly(event)
+      //   break
       case 3: // three-fingered touch: pan
         if (this.enablePan === false) return
         if (this.state !== STATE.TOUCH_PAN) return; // is this needed?...
