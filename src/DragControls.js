@@ -11,6 +11,7 @@
 import {
   Camera,
   EventDispatcher,
+  MOUSE,
   Plane,
   Raycaster,
   Vector2,
@@ -19,6 +20,7 @@ import {
 
 export default class DragControls {
   enabled = true
+  mouseButton = MOUSE.LEFT
 
   //
   // internals
@@ -116,6 +118,7 @@ export default class DragControls {
   }
 
   onDocumentMouseDown = (event) => {
+    if (event.button !== this.mouseButton) return
     event.preventDefault()
 
     this._raycaster.setFromCamera(this._mouse, this._camera)
