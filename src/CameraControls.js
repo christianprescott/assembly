@@ -10,7 +10,14 @@
  * @author erich666 / http://erichaines.com
  */
 
-import { Spherical, Vector3, Vector2, Quaternion, MOUSE } from 'three'
+import {
+  EventDispatcher,
+  MOUSE,
+  Quaternion,
+  Spherical,
+  Vector2,
+  Vector3,
+} from 'three'
 
 const STATE = {
   NONE: -1,
@@ -251,11 +258,6 @@ export default class CameraControls {
     document.removeEventListener('mouseup', this.onMouseUp, false)
     window.removeEventListener('keydown', this.onKeyDown, false)
     // this.dispatchEvent( { type: 'dispose' } ); // should this be added here?
-  }
-
-  // eslint-disable-next-line class-methods-use-this
-  dispatchEvent () {
-    // TODO: dispatch camera events
   }
 
   getAutoRotationAngle () {
@@ -641,3 +643,5 @@ export default class CameraControls {
     event.preventDefault()
   }
 }
+
+Object.assign(CameraControls.prototype, EventDispatcher.prototype)
