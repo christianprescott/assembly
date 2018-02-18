@@ -36,19 +36,29 @@
         </tr>
       </table>
     </p>
+    <div>
+      <button id="fs">Full Screen</button>
+    </div>
     <div id="container"></div>
     <script src="bundle.js"></script>
     <script>
+      const container = document.getElementById('container')
+      const app = new assembly.App(container)
+
+      // Load the scene
       const request = new XMLHttpRequest()
       request.open('GET', 'examples/bricks.json')
       request.responseType = 'json'
       request.onload = function () {
-        const container = document.getElementById('container')
-        const app = new assembly.App(container)
         app.load(assembly.Assembly.load(request.response))
         app.start()
       }
       request.send()
+
+      document.getElementById('fs').addEventListener(
+        'click',
+        function () { app.fullscreen() }
+      )
     </script>
   </body>
 </html>

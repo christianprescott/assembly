@@ -1,3 +1,4 @@
+import fscreen from 'fscreen'
 import { WebGLRenderer } from 'three'
 
 function _createCanvas (parent) {
@@ -25,6 +26,10 @@ export default class ResponsiveRenderer extends WebGLRenderer {
     // interfering with the typical render () { super.render() }
     this._superRender = this.render
     this.render = this._subRender
+  }
+
+  fullscreen () {
+    fscreen.requestFullscreen(this.container)
   }
 
   // private

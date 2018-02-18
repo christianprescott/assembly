@@ -76,6 +76,10 @@ export default class App {
     this._animate()
   }
 
+  fullscreen () {
+    this.renderer.fullscreen()
+  }
+
   // private
 
   _animate = () => {

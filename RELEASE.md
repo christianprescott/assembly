@@ -26,6 +26,7 @@
     left click drag to move along camera plane
     shift+left click drag to move across camera plane
     ctrl+left click drag to rotate
+- [x] fullscreen
 
 ## v0.5.0
 - [ ] Target rotation
@@ -43,7 +44,6 @@
 - [ ] more camera control
     WASD to translate
     snap to horizontal and vertical when released near those points
-- [ ] fullscreen
 - [ ] group linked components, additional grab handle appears for group
 - [ ] physics, optional gravity
 - [ ] constrain workspace, camera
@@ -57,6 +57,7 @@
 
 ## Notes
 
+Ensure THREE objects are instantiated only once, then copied or set during manipulation
 Tweak physics for quick resting http://www.html5gamedevs.com/topic/33392-whats-your-prefered-physics-engine-these-days/?tab=comments#comment-191804
 Consider moving physics processing to worker https://github.com/schteppe/cannon.js/blob/master/examples/worker.html
 Investigate normal-to-normal method of linking
