@@ -18,6 +18,7 @@ export default class App {
 
     const world = new World()
     world.gravity.set(0, 0, 0)
+    world.allowSleep = true
 
     Object.assign(this, { camera, renderer, scene, world })
   }
@@ -35,6 +36,7 @@ export default class App {
         position: new Vec3(...c.position.toArray()),
         shape: new Box(new Vec3(...c.geometry.boundingBox.getSize().toArray().map(v => v / 2))),
       })
+      body.addEventListener('sleep', App._onBodySleep)
       world.addBody(body)
       c.body = body
 
@@ -64,7 +66,9 @@ export default class App {
     })
 
     const dragControls = new DragControls(assembly.components, camera, renderer.domElement)
+    dragControls.addEventListener('dragstart', App._onDragStart)
     dragControls.addEventListener('drag', App._onDrag)
+    dragControls.addEventListener('dragend', App._onDragEnd)
     const cameraControls = new CameraControls(camera, renderer.domElement)
     cameraControls.enablePan = false
 
@@ -104,6 +108,14 @@ export default class App {
     renderer.render(scene, camera)
   }
 
+  static _onDragStart (event) {
+    const component = event.object
+    const { body } = component
+    body.type = Body.DYNAMIC
+    body.allowSleep = false
+    body.wakeUp()
+  }
+
   // TODO: only drag as far as can be raytraced from drag point
   // TODO: consider additional constraints for rotation
   // TODO: maybe reposition dragBody on release so it remains in place
@@ -114,5 +126,17 @@ export default class App {
     // TODO: hm using THREE position allows you to "drag" the component anywhere
     // even where CANNON won't let you. needs work.
     component.testLinks()
+  }
+
+  static _onDragEnd (event) {
+    const component = event.object
+    const { body } = component
+    body.allowSleep = true
+    component.testLinks()
+  }
+
+  static _onBodySleep (event) {
+    const body = event.target
+    body.type = Body.STATIC
   }
 }
