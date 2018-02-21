@@ -123,8 +123,6 @@ export default class App {
     const component = event.object
     const { dragBody, position } = component
     dragBody.position.set(...position.toArray())
-    // TODO: hm using THREE position allows you to "drag" the component anywhere
-    // even where CANNON won't let you. needs work.
     component.testLinks()
   }
 

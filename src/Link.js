@@ -34,6 +34,7 @@ export default class Link extends Object3D {
   }
 
   getDistance () {
-    return this.getWorldPosition().distanceTo(this.meshB.position)
+    // from meshA THREE mesh to meshB CANNON body
+    return this.getWorldPosition().distanceTo(this.meshB.body.position)
   }
 }
