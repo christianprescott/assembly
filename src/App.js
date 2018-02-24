@@ -1,4 +1,4 @@
-import { Body, Box, PointToPointConstraint, Vec3, World } from 'cannon'
+import { Body, Box, LockConstraint, Vec3, World } from 'cannon'
 import { Clock, PerspectiveCamera } from 'three'
 import buildScene from './buildScene'
 import DragControls from './DragControls'
@@ -44,13 +44,11 @@ export default class App {
       world.addBody(dragBody)
       c.dragBody = dragBody
 
-      const constraint = new PointToPointConstraint(
+      const constraint = new LockConstraint(
         body,
-        new Vec3(0, 0, 0),
         dragBody,
-        new Vec3(0, 0, 0),
         // TODO: revisit force after revising drag
-        10,
+        { maxForce: 10 },
       )
       world.addConstraint(constraint)
     })
