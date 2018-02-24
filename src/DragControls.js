@@ -18,6 +18,13 @@ import {
   Vector3,
 } from 'three'
 
+
+const STATE = {
+  NONE: -1,
+  ALONG: 0,
+  ACROSS: 1,
+}
+
 export default class DragControls {
   enabled = true
   mouseButton = MOUSE.LEFT
@@ -30,9 +37,11 @@ export default class DragControls {
   _raycaster = new Raycaster()
 
   _mouse = new Vector2()
-  _offset = new Vector3()
+  _startPosition = new Vector3()
   _intersection = new Vector3()
+  _startIntersection = new Vector3()
 
+  _state = STATE.NONE
   _selected = null
   _hovered = null
 
@@ -84,11 +93,12 @@ export default class DragControls {
     this._raycaster.setFromCamera(this._mouse, this._camera)
   }
 
-  _handleDragStart () {
+  _handleDragStart (event) {
     const intersects = this._raycaster.intersectObjects(this._objects)
 
     if (intersects.length > 0) {
       this._selected = intersects[0].object
+      this._startPosition.copy(this._selected.position)
 
       this._plane.setFromNormalAndCoplanarPoint(
         this._camera.getWorldDirection(this._plane.normal),
@@ -96,9 +106,10 @@ export default class DragControls {
       )
 
       if (this._raycaster.ray.intersectPlane(this._plane, this._intersection)) {
-        this._offset.copy(this._intersection).sub(this._selected.position)
+        this._startIntersection.copy(this._intersection)
       }
 
+      this._state = event.shiftKey ? STATE.ACROSS : STATE.ALONG
       this._domElement.style.cursor = 'move'
 
       this.dispatchEvent({ type: 'dragstart', object: this._selected })
@@ -108,7 +119,16 @@ export default class DragControls {
   _handleDrag () {
     if (this._selected && this.enabled) {
       if (this._raycaster.ray.intersectPlane(this._plane, this._intersection)) {
-        this._selected.position.copy(this._intersection.sub(this._offset))
+        // offset from drag start
+        this._intersection.sub(this._startIntersection)
+        if (this._state === STATE.ACROSS) {
+          // transform to cross _plane
+          this._intersection.applyAxisAngle(
+            this._camera.getWorldDirection().cross(this._camera.up),
+            Math.PI / -2,
+          )
+        }
+        this._selected.position.copy(this._intersection.add(this._startPosition))
       }
 
       this.dispatchEvent({ type: 'drag', object: this._selected })
@@ -121,6 +141,7 @@ export default class DragControls {
       this._selected = null
     }
 
+    this._state = STATE.NONE
     this._domElement.style.cursor = 'auto'
   }
 
@@ -130,7 +151,7 @@ export default class DragControls {
     this._updateRaycaster(event)
 
     if (this._selected && this.enabled) {
-      this._handleDrag(event)
+      this._handleDrag()
       return
     }
 
@@ -158,7 +179,7 @@ export default class DragControls {
     event.preventDefault()
 
     this._updateRaycaster(event)
-    this._handleDragStart()
+    this._handleDragStart(event)
   }
 
   _onDocumentMouseCancel = (event) => {
@@ -171,7 +192,7 @@ export default class DragControls {
     const [event] = e.touches
 
     this._updateRaycaster(event)
-    this._handleDrag(event)
+    this._handleDrag()
   }
 
   _onDocumentTouchStart = (e) => {
@@ -183,7 +204,7 @@ export default class DragControls {
     const [event] = e.touches
 
     this._updateRaycaster(event)
-    this._handleDragStart()
+    this._handleDragStart(event)
   }
 
   _onDocumentTouchEnd = (event) => {
