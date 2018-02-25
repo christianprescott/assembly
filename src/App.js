@@ -4,6 +4,7 @@ import buildScene from './buildScene'
 import DragControls from './DragControls'
 import CameraControls from './CameraControls'
 import ResponsiveRenderer from './ResponsiveRenderer'
+import RotateControls from './RotateControls'
 
 export default class App {
   clock = new Clock(false)
@@ -67,6 +68,8 @@ export default class App {
     dragControls.addEventListener('dragstart', App._onDragStart)
     dragControls.addEventListener('drag', App._onDrag)
     dragControls.addEventListener('dragend', App._onDragEnd)
+    const rotateControls = new RotateControls(assembly.components, camera, renderer.domElement)
+    rotateControls.addEventListener('rotate', App._onRotate)
     const cameraControls = new CameraControls(camera, renderer.domElement)
     cameraControls.enablePan = false
 
@@ -134,5 +137,11 @@ export default class App {
   static _onBodySleep (event) {
     const body = event.target
     body.type = Body.STATIC
+  }
+
+  static _onRotate (event) {
+    const component = event.object
+    const { dragBody, quaternion } = component
+    dragBody.quaternion.set(...quaternion.toArray())
   }
 }

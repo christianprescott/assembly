@@ -22,7 +22,7 @@
 - [x] camera control
     right click drag to orbit
     camera stays z-up
-- [ ] 3D input
+- [x] 3D input
     left click drag to move along camera plane
     shift+left click drag to move across camera plane
     ctrl+left click drag to rotate
@@ -40,6 +40,7 @@
     identify meshes as one of
       box - 8 vertices, right angles
       sphere - all vertices (max - min) distance from center of bounding box
+- [ ] shadows
 - [ ] shuffle components
 - [ ] more camera control
     WASD to translate
