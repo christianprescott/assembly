@@ -144,6 +144,7 @@ export default class CameraControls {
     this.domElement.addEventListener('touchstart', this.onTouchStart, false)
     this.domElement.addEventListener('touchend', this.onTouchEnd, false)
     this.domElement.addEventListener('touchmove', this.onTouchMove, false)
+    document.addEventListener('pointerlockchange', this.onPointerLockChange, false)
     window.addEventListener('keydown', this.onKeyDown, false)
 
     this.saveState()
@@ -256,6 +257,7 @@ export default class CameraControls {
     this.domElement.removeEventListener('touchmove', this.onTouchMove, false)
     document.removeEventListener('mousemove', this.onMouseMove, false)
     document.removeEventListener('mouseup', this.onMouseUp, false)
+    document.removeEventListener('pointerlockchange', this.onPointerLockChange, false)
     window.removeEventListener('keydown', this.onKeyDown, false)
     // this.dispatchEvent( { type: 'dispose' } ); // should this be added here?
   }
@@ -354,53 +356,27 @@ export default class CameraControls {
   // event callbacks - update the object state
   //
 
-  handleMouseDownRotate (event) {
-    this.rotateStart.set(event.clientX, event.clientY)
-  }
-
-  handleMouseDownDolly (event) {
-    this.dollyStart.set(event.clientX, event.clientY)
-  }
-
-  handleMouseDownPan (event) {
-    this.panStart.set(event.clientX, event.clientY)
-  }
-
   handleMouseMoveRotate (event) {
-    this.rotateEnd.set(event.clientX, event.clientY)
-    this.rotateDelta.subVectors(this.rotateEnd, this.rotateStart)
-
     const element = this.domElement === document ? this.domElement.body : this.domElement
     // rotating across whole screen goes 360 degrees around
-    this.rotateLeft(2 * Math.PI * this.rotateDelta.x / element.clientWidth * this.rotateSpeed)
+    this.rotateLeft(2 * Math.PI * event.movementX / element.clientWidth * this.rotateSpeed)
     // rotating up and down along whole screen attempts to go 360, but limited to 180
-    this.rotateUp(2 * Math.PI * this.rotateDelta.y / element.clientHeight * this.rotateSpeed)
-    this.rotateStart.copy(this.rotateEnd)
+    this.rotateUp(2 * Math.PI * event.movementY / element.clientHeight * this.rotateSpeed)
 
     this.update()
   }
 
   handleMouseMoveDolly (event) {
-    this.dollyEnd.set(event.clientX, event.clientY)
-    this.dollyDelta.subVectors(this.dollyEnd, this.dollyStart)
-
-    if (this.dollyDelta.y > 0) {
+    if (event.movementY > 0) {
       this.dollyIn(this.getZoomScale())
-    } else if (this.dollyDelta.y < 0) {
+    } else if (event.movementY < 0) {
       this.dollyOut(this.getZoomScale())
     }
-
-    this.dollyStart.copy(this.dollyEnd)
     this.update()
   }
 
   handleMouseMovePan (event) {
-    this.panEnd.set(event.clientX, event.clientY)
-    this.panDelta.subVectors(this.panEnd, this.panStart)
-
-    this.pan(this.panDelta.x, this.panDelta.y)
-
-    this.panStart.copy(this.panEnd)
+    this.pan(event.movementX, event.movementY)
     this.update()
   }
 
@@ -503,17 +479,14 @@ export default class CameraControls {
     switch (event.button) {
       case this.mouseButtons.ORBIT:
         if (this.enableRotate === false) return
-        this.handleMouseDownRotate(event)
         this.state = STATE.ROTATE
         break
       case this.mouseButtons.ZOOM:
         if (this.enableZoom === false) return
-        this.handleMouseDownDolly(event)
         this.state = STATE.DOLLY
         break
       case this.mouseButtons.PAN:
         if (this.enablePan === false) return
-        this.handleMouseDownPan(event)
         this.state = STATE.PAN
         break
       default:
@@ -524,6 +497,7 @@ export default class CameraControls {
       document.addEventListener('mousemove', this.onMouseMove, false)
       document.addEventListener('mouseup', this.onMouseUp, false)
       this.dispatchEvent(EVENT.START)
+      this.domElement.requestPointerLock()
     }
   }
 
@@ -557,6 +531,7 @@ export default class CameraControls {
 
     this.dispatchEvent(EVENT.END)
     this.state = STATE.NONE
+    document.exitPointerLock()
   }
 
   onMouseWheel = (event) => {
@@ -643,6 +618,13 @@ export default class CameraControls {
   onContextMenu = (event) => {
     if (this.enabled === false) return
     event.preventDefault()
+  }
+
+  onPointerLockChange = () => {
+    if (this.state === STATE.NONE) return
+    if (document.pointerLockElement) return
+    this.dispatchEvent(EVENT.END)
+    this.state = STATE.NONE
   }
 }
 
