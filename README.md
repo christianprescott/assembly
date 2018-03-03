@@ -3,6 +3,7 @@
 ## Build
 
 ```sh
+npm install
 npm run build
 cd dist && python -m SimpleHTTPServer 8080 # or whatever
 open http://localhost:8080
