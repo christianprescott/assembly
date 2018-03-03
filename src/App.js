@@ -119,9 +119,6 @@ export default class App {
     body.wakeUp()
   }
 
-  // TODO: only drag as far as can be raytraced from drag point
-  // TODO: consider additional constraints for rotation
-  // TODO: maybe reposition dragBody on release so it remains in place
   static _onDrag (event) {
     const component = event.object
     const { dragBody, position } = component

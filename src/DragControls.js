@@ -128,7 +128,10 @@ export default class DragControls {
             Math.PI / -2,
           )
         }
-        this._selected.position.copy(this._intersection.add(this._startPosition))
+        // new position
+        this._intersection.add(this._startPosition)
+
+        this._selected.position.copy(this._intersection)
       }
 
       this.dispatchEvent({ type: 'drag', object: this._selected })
