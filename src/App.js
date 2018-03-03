@@ -69,7 +69,9 @@ export default class App {
     dragControls.addEventListener('drag', App._onDrag)
     dragControls.addEventListener('dragend', App._onDragEnd)
     const rotateControls = new RotateControls(assembly.components, camera, renderer.domElement)
+    rotateControls.addEventListener('rotatestart', App._onDragStart)
     rotateControls.addEventListener('rotate', App._onRotate)
+    rotateControls.addEventListener('rotateend', App._onDragEnd)
     const cameraControls = new CameraControls(camera, renderer.domElement)
     cameraControls.enablePan = false
 

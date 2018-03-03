@@ -117,14 +117,14 @@ export default class RotateControls {
   }
 
   _onMouseMove = (event) => {
-    if (this._state !== STATE.ROTATE) return
+    if (this._state === STATE.NONE) return
     event.preventDefault()
 
     this._handleDrag(event)
   }
 
   _onMouseUp = (event) => {
-    if (this._state !== STATE.ROTATE) return
+    if (this._state === STATE.NONE) return
     event.preventDefault()
 
     this._handleDragEnd()
@@ -132,7 +132,7 @@ export default class RotateControls {
   }
 
   _onPointerLockChange = () => {
-    if (this._state !== STATE.ROTATE) return
+    if (this._state === STATE.NONE) return
     if (document.pointerLockElement) return
     this._handleDragEnd()
   }

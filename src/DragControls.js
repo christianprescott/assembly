@@ -176,6 +176,7 @@ export default class DragControls {
 
   _onDocumentMouseDown = (event) => {
     if (event.button !== this.mouseButton) return
+    if (event.ctrlKey) return
     event.preventDefault()
 
     this._updateRaycaster(event)
