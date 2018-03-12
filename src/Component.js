@@ -10,6 +10,9 @@ export default class Component extends Mesh {
       geometry,
       MAT_UNLINKED,
     )
+    this.castShadow = true
+    this.receiveShadow = true
+
     this.links = []
     this.body = null
     this.dragBody = null

@@ -7,6 +7,9 @@ export default class Fixture extends Mesh {
       geometry,
       new MeshToonMaterial({ color: 0x808080 }),
     )
+    this.castShadow = true
+    this.receiveShadow = true
+
     this.body = null
   }
 }
