@@ -15,11 +15,7 @@ export default class Assembly {
       if (!name) throw new Error('mesh must have a name')
       if (acc[name]) throw new Error(`duplicate mesh with name "${name}"`)
       const Type = config.fixtures.includes(name) ? Fixture : Component
-      const mesh = new Type(geometry)
-      mesh.geometry.computeBoundingBox()
-      const box = mesh.geometry.boundingBox.getCenter()
-      mesh.geometry.translate(...box.toArray().map(v => v * -1))
-      mesh.position.copy(box)
+      const mesh = Type.create(geometry)
       acc[name] = mesh
       return acc
     }, {})

@@ -1,4 +1,4 @@
-import { Body, Box, LockConstraint, Vec3, World } from 'cannon'
+import { Body, LockConstraint, World } from 'cannon'
 import { Clock, PerspectiveCamera } from 'three'
 import buildScene from './buildScene'
 import DragControls from './DragControls'
@@ -28,43 +28,25 @@ export default class App {
   // TODO: clear previous contents, controls
   load (assembly) {
     const { camera, scene, renderer, world } = this
-    scene.add(...assembly.fixtures)
-    scene.add(...assembly.components)
 
     assembly.components.forEach((c) => {
-      const body = new Body({
-        angularDamping: 0.8,
-        mass: 5,
-        position: new Vec3(...c.position.toArray()),
-        shape: new Box(new Vec3(...c.geometry.boundingBox.getSize().toArray().map(v => v / 2))),
-      })
-      // Link Component for reference from event
-      body.component = c
-      body.addEventListener('sleep', App._onBodySleep)
-      world.addBody(body)
-      c.body = body
-
-      const dragBody = new Body({ position: body.position })
-      world.addBody(dragBody)
-      c.dragBody = dragBody
+      scene.add(c)
+      c.body.addEventListener('sleep', App._onBodySleep)
+      world.addBody(c.body)
+      world.addBody(c.dragBody)
 
       const constraint = new LockConstraint(
-        body,
-        dragBody,
+        c.body,
+        c.dragBody,
         // TODO: revisit force after revising drag
         { maxForce: 10 },
       )
       world.addConstraint(constraint)
     })
 
-    assembly.fixtures.forEach((c) => {
-      const body = new Body({
-        mass: 0,
-        position: new Vec3(...c.position.toArray()),
-        shape: new Box(new Vec3(...c.geometry.boundingBox.getSize().toArray().map(v => v / 2))),
-      })
-      world.addBody(body)
-      c.body = body
+    assembly.fixtures.forEach((f) => {
+      scene.add(f)
+      world.addBody(f.body)
     })
 
     const dragControls = new DragControls(assembly.components, camera, renderer.domElement)
