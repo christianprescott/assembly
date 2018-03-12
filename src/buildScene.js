@@ -11,9 +11,12 @@ export default function () {
 
   // lights
   const ambientLight = new AmbientLight(0x222222)
-  const directionalLight = new DirectionalLight(0xffffff, 1)
+  const directionalLight = new DirectionalLight(0xffffff, 0.7)
   directionalLight.position.set(3, -1, 2).normalize()
-  scene.add(ambientLight, directionalLight)
+  const shadowLight = new DirectionalLight(0xffffff, 0.2)
+  shadowLight.position.set(0, 0, 10)
+  shadowLight.castShadow = true
+  scene.add(ambientLight, directionalLight, shadowLight)
 
   return scene
 }

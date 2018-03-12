@@ -29,9 +29,11 @@
 - [x] fullscreen
 
 ## v0.5.0
+- [x] shadows
 - [ ] Target rotation
 - [ ] Margin of error for target position and rotation
 - [ ] Revisit scene units, camera clipping
+    consider shadowmap and light position
 
 ## Backlog
 - [ ] flow, see git stash https://flow.org/en/docs/getting-started/
@@ -40,7 +42,6 @@
     identify meshes as one of
       box - 8 vertices, right angles
       sphere - all vertices (max - min) distance from center of bounding box
-- [ ] shadows
 - [ ] shuffle components
 - [ ] more camera control
     WASD to translate
