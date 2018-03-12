@@ -1,4 +1,5 @@
 const path = require('path')
+const webpack = require('webpack')
 
 module.exports = {
   entry: './src/index.js',
@@ -31,5 +32,10 @@ module.exports = {
         use: 'imports-loader?THREE=three'
       }
     ]
-  }
+  },
+  plugins: [
+    new webpack.DefinePlugin({
+      DEBUG: JSON.stringify(process.env.ASSEMBLY_DEBUG)
+    })
+  ]
 }

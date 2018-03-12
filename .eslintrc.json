@@ -3,6 +3,9 @@
       "browser": true
     },
     "extends": "airbnb-base",
+    "globals": {
+      "DEBUG": false
+    },
     "parser": "babel-eslint",
     "rules": {
       "function-paren-newline": ["error", "consistent"],

@@ -30,6 +30,7 @@
 
 ## v0.5.0
 - [x] shadows
+- [x] debug view
 - [ ] Target rotation
 - [ ] Margin of error for target position and rotation
 - [ ] Revisit scene units, camera clipping

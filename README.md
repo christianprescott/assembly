@@ -2,6 +2,9 @@
 
 ## Build
 
+Set the `ASSEMBLY_DEBUG` environment variable to build in debug mode. Bodies are
+rendered in wireframe and link distance is visible.
+
 ```sh
 npm install
 npm run build

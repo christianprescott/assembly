@@ -1,14 +1,15 @@
-import { Mesh, MeshToonMaterial } from 'three'
+import { Mesh, MeshBasicMaterial, MeshToonMaterial } from 'three'
 
-const MAT_LINKED = new MeshToonMaterial({ color: 0x00ff00 })
-const MAT_UNLINKED = new MeshToonMaterial({ color: 0xff0000 })
+const MAT_COMPONENT = DEBUG ?
+  new MeshBasicMaterial({ color: 0xa0a0a0, opacity: 0.3, transparent: true, wireframe: true }) :
+  new MeshToonMaterial({ color: 0xff0000 })
 
 export default class Component extends Mesh {
   constructor (geometry) {
     if (!geometry) throw new Error('geometry must be present')
     super(
       geometry,
-      MAT_UNLINKED,
+      MAT_COMPONENT,
     )
     this.castShadow = true
     this.receiveShadow = true
@@ -27,11 +28,11 @@ export default class Component extends Mesh {
     Array.from(meshes.values())
       .filter(m => m instanceof Component)
       .forEach((component) => {
-        const linked = component.links.find((l) => {
+        component.links.find((l) => {
           const dist = l.getDistance()
           return dist < 0.05
         })
-        component.material = linked ? MAT_LINKED : MAT_UNLINKED
+        // TODO: raise linked event
       })
   }
 }
