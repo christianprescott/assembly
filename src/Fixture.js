@@ -1,5 +1,5 @@
 import { Body, Box, Vec3 } from 'cannon'
-import { Mesh, MeshBasicMaterial, MeshToonMaterial } from 'three'
+import { BoxGeometry, Mesh, MeshBasicMaterial, MeshToonMaterial } from 'three'
 
 const MAT_FIXTURE = DEBUG ?
   new MeshBasicMaterial({ color: 0x202020, opacity: 0.3, transparent: true, wireframe: true }) :
@@ -12,6 +12,11 @@ export default class Fixture extends Mesh {
     geometry.computeBoundingBox()
     const position = geometry.boundingBox.getCenter()
     geometry.translate(...position.toArray().map(v => v * -1))
+
+    if (DEBUG) {
+      geometry = new BoxGeometry(...geometry.boundingBox.getSize().toArray())
+      geometry.computeBoundingBox()
+    }
 
     const size = geometry.boundingBox.getSize()
     const body = new Body({
