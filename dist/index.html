@@ -57,13 +57,18 @@
       app.start()
 
       // Load the scene
-      const request = new XMLHttpRequest()
-      request.open('GET', 'examples/bricks.json')
-      request.responseType = 'json'
-      request.onload = function () {
-        app.load(assembly.Assembly.load(request.response))
+      const objRequest = new XMLHttpRequest()
+      objRequest.open('GET', 'examples/bricks.obj')
+      const configRequest = new XMLHttpRequest()
+      configRequest.open('GET', 'examples/bricks.json')
+      configRequest.responseType = 'json'
+      configRequest.onload = function () {
+        app.load(assembly.Assembly.load(objRequest.response, configRequest.response))
       }
-      request.send()
+      objRequest.onload = function () {
+        configRequest.send()
+      }
+      objRequest.send()
 
       document.getElementById('fs').addEventListener(
         'click',

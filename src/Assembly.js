@@ -5,10 +5,8 @@ import Fixture from './Fixture'
 import Link from './Link'
 
 export default class Assembly {
-  static load (config) {
-    // TODO: including contents of an entire .obj file in this object
-    // is not awesome
-    const group = new OBJLoader().parse(config.obj)
+  static load (obj, config) {
+    const group = new OBJLoader().parse(obj)
 
     const meshes = group.children.reduce((acc, m) => {
       const { name, geometry } = m
