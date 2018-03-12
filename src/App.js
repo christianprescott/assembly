@@ -37,6 +37,8 @@ export default class App {
         position: new Vec3(...c.position.toArray()),
         shape: new Box(new Vec3(...c.geometry.boundingBox.getSize().toArray().map(v => v / 2))),
       })
+      // Link Component for reference from event
+      body.component = c
       body.addEventListener('sleep', App._onBodySleep)
       world.addBody(body)
       c.body = body
@@ -130,12 +132,12 @@ export default class App {
     const component = event.object
     const { body } = component
     body.allowSleep = true
-    component.testLinks()
   }
 
   static _onBodySleep (event) {
     const body = event.target
     body.type = Body.STATIC
+    body.component.testLinks()
   }
 
   static _onRotate (event) {
