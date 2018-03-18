@@ -31,25 +31,27 @@
 ## v0.5.0
 - [x] shadows
 - [x] debug view
-- [ ] Target rotation
-- [ ] Margin of error for target position and rotation
-- [ ] Revisit scene units, camera clipping
-    consider shadowmap and light position
+- [x] Target rotation
 
-## Backlog
-- [ ] flow, see git stash https://flow.org/en/docs/getting-started/
+## v0.6.0
 - [ ] compound collisions
     configure many body meshes per obj mesh
     identify meshes as one of
       box - 8 vertices, right angles
       sphere - all vertices (max - min) distance from center of bounding box
 - [ ] shuffle components
+- [ ] Revisit scene units, camera clipping
+    consider shadowmap and light position
+
+## Backlog
+- [ ] group linked components, additional grab handle appears for group
+- [ ] event emitter
+- [ ] physics, optional gravity
+- [ ] constrain workspace, camera
+- [ ] Margin of error for target position and rotation
 - [ ] more camera control
     WASD to translate
     snap to horizontal and vertical when released near those points
-- [ ] group linked components, additional grab handle appears for group
-- [ ] physics, optional gravity
-- [ ] constrain workspace, camera
 - [ ] touch controls
 - [ ] animation, indication for unplaced components
 - [ ] component name tooltip
@@ -57,6 +59,7 @@
 - [ ] materials, color
 - [ ] Optional snap to position during drag or drag release
 - [ ] "optional" links - accept one of several positions
+- [ ] VR
 
 ## Notes
 

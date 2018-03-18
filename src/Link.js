@@ -88,7 +88,7 @@ export default class Link extends Object3D {
     return [this.meshA, this.meshB]
   }
 
-  getDistance () {
+  test () {
     // from meshA THREE mesh to meshB CANNON body
     const distance = this.getWorldPosition().distanceTo(this.meshB.body.position)
     const [axis, angle] = this.meshB.body.quaternion.toAxisAngle()
@@ -109,6 +109,6 @@ export default class Link extends Object3D {
       this.arrowMesh.material = distance < 0.05 ? MAT_ARROW_LINKED : MAT_ARROW
       this.arc.material = angle < 0.05 ? MAT_ARROW_LINKED : MAT_ARROW
     }
-    return distance
+    return distance < 0.05 && angle < 0.05
   }
 }

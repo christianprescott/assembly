@@ -57,10 +57,7 @@ export default class Component extends Mesh {
     Array.from(meshes.values())
       .filter(m => m instanceof Component)
       .forEach((component) => {
-        component.links.find((l) => {
-          const dist = l.getDistance()
-          return dist < 0.05
-        })
+        component.links.find(l => l.test())
         // TODO: raise linked event
       })
   }
