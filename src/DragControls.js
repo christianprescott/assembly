@@ -94,10 +94,12 @@ export default class DragControls {
   }
 
   _handleDragStart (event) {
-    const intersects = this._raycaster.intersectObjects(this._objects)
+    // Intersected meshes are children of the Component, so we intersect
+    // recursively and reference parent
+    const intersects = this._raycaster.intersectObjects(this._objects, true)
 
     if (intersects.length > 0) {
-      this._selected = intersects[0].object
+      this._selected = intersects[0].object.parent
       this._startPosition.copy(this._selected.position)
 
       this._plane.setFromNormalAndCoplanarPoint(
@@ -158,10 +160,10 @@ export default class DragControls {
       return
     }
 
-    const intersects = this._raycaster.intersectObjects(this._objects)
+    const intersects = this._raycaster.intersectObjects(this._objects, true)
 
     if (intersects.length > 0) {
-      const { object } = intersects[0]
+      const object = intersects[0].object.parent
 
       if (this._hovered !== object) {
         this.dispatchEvent({ type: 'hoveron', object })

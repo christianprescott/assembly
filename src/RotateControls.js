@@ -73,10 +73,12 @@ export default class RotateControls {
   }
 
   _handleDragStart () {
-    const intersects = this._raycaster.intersectObjects(this._objects)
+    // Intersected meshes are children of the Component, so we intersect
+    // recursively and reference parent
+    const intersects = this._raycaster.intersectObjects(this._objects, true)
 
     if (intersects.length > 0) {
-      this._selected = intersects[0].object
+      this._selected = intersects[0].object.parent
       this._state = STATE.ROTATE
       this.dispatchEvent({ type: 'rotatestart', object: this._selected })
       this._domElement.requestPointerLock()

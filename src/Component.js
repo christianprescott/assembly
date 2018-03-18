@@ -1,60 +1,79 @@
 import { Body, Box, Vec3 } from 'cannon'
-import { BoxGeometry, Mesh, MeshBasicMaterial, MeshToonMaterial } from 'three'
+import { Box3, BoxGeometry, Mesh, MeshBasicMaterial, MeshToonMaterial, Object3D } from 'three'
 
 const MAT_COMPONENT = DEBUG ?
   new MeshBasicMaterial({ color: 0xa0a0a0, opacity: 0.3, transparent: true, wireframe: true }) :
   new MeshToonMaterial({ color: 0xff0000 })
 
-export default class Component extends Mesh {
-  static create (geometry) {
-    if (!geometry) throw new Error('geometry must be present')
+export default class Component extends Object3D {
+  static create (meshGeometries, bodyGeometries) {
+    const object = new Component()
 
-    geometry.computeBoundingBox()
-    const position = geometry.boundingBox.getCenter()
-    geometry.translate(...position.toArray().map(v => v * -1))
-
-    if (DEBUG) {
-      geometry = new BoxGeometry(...geometry.boundingBox.getSize().toArray())
-      geometry.computeBoundingBox()
-    }
-
-    const size = geometry.boundingBox.getSize()
-    const body = new Body({
-      angularDamping: 0.8,
-      mass: 5,
-      position: new Vec3(...position.toArray()),
-      shape: new Box(new Vec3(...size.toArray().map(v => v / 2))),
+    // Add meshes to the object
+    meshGeometries.forEach((geometry) => {
+      const mesh = new Mesh(geometry, MAT_COMPONENT)
+      mesh.castShadow = true
+      mesh.receiveShadow = true
+      object.add(mesh)
     })
 
-    const dragBody = new Body({ position: body.position })
+    // Position geometries around object center
+    const box = new Box3().setFromObject(object)
+    const position = box.getCenter()
+    new Set(meshGeometries.concat(bodyGeometries)).forEach((geometry) => {
+      geometry.translate(...position.toArray().map(v => v * -1))
+    })
 
-    const c = new Component(geometry, body, dragBody)
-    c.position.copy(position)
-    return c
+    // Add collision bodies to the object
+    bodyGeometries.forEach((geometry) => {
+      geometry.computeBoundingBox()
+      const size = geometry.boundingBox.getSize()
+      const center = geometry.boundingBox.getCenter()
+      const shape = new Box(new Vec3(...size.toArray().map(v => v / 2)))
+      const offset = new Vec3(...center.toArray())
+      object.body.addShape(shape, offset)
+    })
+
+    if (DEBUG) {
+      // Drain meshes from object
+      object.remove(...object.children)
+      object.body.shapes.forEach((shape, i) => {
+        const offset = object.body.shapeOffsets[i]
+        const mesh = new Mesh(
+          new BoxGeometry(...shape.halfExtents.toArray().map(s => s * 2)),
+          MAT_COMPONENT,
+        )
+        mesh.position.set(...offset.toArray())
+        object.add(mesh)
+      })
+    }
+
+    object.position.copy(position)
+    object.body.position.set(...position.toArray())
+    object.dragBody.position.set(...position.toArray())
+    return object
   }
 
-  constructor (geometry, body, dragBody) {
-    super(
-      geometry,
-      MAT_COMPONENT,
-    )
-    this.castShadow = true
-    this.receiveShadow = true
+  constructor () {
+    super()
 
     this.links = []
+    this.body = new Body({
+      angularDamping: 0.8,
+      mass: 5,
+    })
     // Link Component for reference from events
-    body.component = this
-    this.body = body
-    this.dragBody = dragBody
+    this.body.component = this
+    this.dragBody = new Body()
   }
 
   testLinks () {
-    const meshes = this.links.reduce((acc, l) => {
-      l.meshes().forEach(m => acc.add(m))
+    const objects = this.links.reduce((acc, l) => {
+      l.objects().forEach(m => acc.add(m))
       return acc
     }, new Set())
 
-    Array.from(meshes.values())
+    Array.from(objects.values())
       .filter(m => m instanceof Component)
       .forEach((component) => {
         component.links.find(l => l.test())

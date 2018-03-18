@@ -1,9 +1,22 @@
 {
-  "fixtures": [
-    "Bottom_Cube"
-  ],
+  "components": {
+    "Middle" : {
+      "meshes": ["Middle_Cube.001"],
+      "bodies": ["Middle_Cube.001"]
+    },
+    "Top" : {
+      "meshes": ["Top_Cube.002"],
+      "bodies": ["Top_Cube.002"]
+    }
+  },
+  "fixtures": {
+    "Bottom" : {
+      "meshes": ["Bottom_Cube"],
+      "bodies": ["Bottom_Cube"]
+    }
+  },
   "links": [
-    ["Bottom_Cube", "Middle_Cube.001"],
-    ["Middle_Cube.001", "Top_Cube.002"]
+    ["Bottom", "Middle"],
+    ["Middle", "Top"]
   ]
 }

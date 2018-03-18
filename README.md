@@ -14,16 +14,20 @@ open http://localhost:8080
 
 ## Scene Configuration
 
-`Assembly.load` accepts two arguments to build the scene: the geometry
-definition and a configuration object. See dist/examples for samples.
+`Assembly.load(obj, config)` accepts two arguments to build the scene: the
+geometry definition and a sidecar configuration object. See dist/examples for
+samples.
 
 ### `obj: String`
 
 Wavefront OBJ definition of geometry. Objects must be uniquely named. Objects
-should be positioned so the Assembly is complete and each component is in the
+should be positioned so the assembly is complete and each component is in the
 desired position.
 
-Rigid bodies are determined from geometry bounding box.
+Define geometry for both the rendered scene and physics rigid bodies, the
+configuration object will define each object's role.
+
+Objects are rendered Z up and Y forward.
 
 ### `config: Object`
 
@@ -31,14 +35,35 @@ The configuration defines relationships and roles of geometry, using the object
 name as defined by `o [object name]` in the OBJ definition to reference
 geometry. The object must have the following attributes.
 
-#### `fixtures: String[]`
+#### `components: Object`
 
-Names of objects to be added to the scene as Fixtures. Will maintain their
-position in the scene and relative to other fixtures. Can not be repositioned.
+Components are repositioned by the user to complete the assembly.
 
-Remaining objects will be added to the scene as Components.
+The keys of the `components` object are the names referenced by `links`. The
+values of the `components` object must be objects with the following attributes.
+
+##### `meshes: String[]`
+
+Names of geometry objects that will be rendered in the scene to represent this
+component. Unless also included in `bodies`, these objects will have no effect
+on collisions between components and fixtures.
+
+##### `bodies: String[]`
+
+Names of geometry objects that will be added to the physics world as rigid
+bodies. These objects are not rendered.
+
+Rigid body shapes are determined from bounding box of each named geometry.
+
+#### `fixtures: Object`
+
+Fixtures are static. They can be linked to components but cannot be
+repositioned.
+
+The `fixtures` object must take the same shape as `components`.
 
 #### `links: String[][]`
 
 Define placement of component relative to fixture or other component. Each link
-must be an array of two object names to link.
+must be an array of two object names defined by the keys of `components` or
+`fixtures`.

@@ -28,27 +28,27 @@ const POINT = [
 ]
 
 export default class Link extends Object3D {
-  static create (meshA, meshB) {
-    const meshes = [meshA, meshB]
-    if (!meshes.every(m => m instanceof Mesh)) throw new Error('meshes must be present')
-    if (meshA === meshB) throw new Error('cannot link mesh to itself')
+  static create (objectA, objectB) {
+    const objects = [objectA, objectB]
+    if (!objects.every(m => m instanceof Object3D)) throw new Error('objects must be present')
+    if (objectA === objectB) throw new Error('cannot link object to itself')
 
-    const componentIndex = meshes.findIndex(m => m instanceof Component)
+    const componentIndex = objects.findIndex(m => m instanceof Component)
     if (componentIndex < 0) throw new Error('cannot link two fixtures')
-    const component = meshes[componentIndex]
-    const other = meshes[1 - componentIndex]
-    const notLinked = component.links.every(l => !l.meshes().includes(other))
-    if (!notLinked) throw new Error('these meshes are already linked')
+    const component = objects[componentIndex]
+    const other = objects[1 - componentIndex]
+    const notLinked = component.links.every(l => !l.objects().includes(other))
+    if (!notLinked) throw new Error('these objects are already linked')
 
-    return new Link(meshA, meshB)
+    return new Link(objectA, objectB)
   }
 
-  constructor (meshA, meshB) {
+  constructor (objectA, objectB) {
     super()
-    Object.assign(this, { meshA, meshB })
+    Object.assign(this, { objectA, objectB })
 
-    this.position.subVectors(meshB.position, meshA.position)
-    meshA.add(this)
+    this.position.subVectors(objectB.position, objectA.position)
+    objectA.add(this)
 
     if (DEBUG) {
       // Link indicator
@@ -79,22 +79,22 @@ export default class Link extends Object3D {
       this.add(this.arc)
     }
 
-    this.meshes()
+    this.objects()
       .filter(m => m instanceof Component)
       .forEach(c => c.links.push(this))
   }
 
-  meshes () {
-    return [this.meshA, this.meshB]
+  objects () {
+    return [this.objectA, this.objectB]
   }
 
   test () {
-    // from meshA THREE mesh to meshB CANNON body
-    const distance = this.getWorldPosition().distanceTo(this.meshB.body.position)
-    const [axis, angle] = this.meshB.body.quaternion.toAxisAngle()
+    // from objectA THREE Object3D to objectB CANNON Body
+    const distance = this.getWorldPosition().distanceTo(this.objectB.body.position)
+    const [axis, angle] = this.objectB.body.quaternion.toAxisAngle()
     if (DEBUG) {
       // Position distance
-      this.line.geometry.vertices[1].subVectors(this.meshB.body.position, this.getWorldPosition())
+      this.line.geometry.vertices[1].subVectors(this.objectB.body.position, this.getWorldPosition())
       this.line.geometry.verticesNeedUpdate = true
       this.line.geometry.lineDistancesNeedUpdate = true
       this.line.geometry.computeLineDistances()
