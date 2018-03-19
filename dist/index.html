@@ -3,17 +3,27 @@
   <head>
     <title>Assembly</title>
     <style>
+      html, body {
+        margin: 0;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+      }
+      #title {
+        margin: 1rem;
+      }
       #container {
-        height: 400px;
+        min-height: 200px;
+        flex: 1;
       }
     </style>
   </head>
   <body>
-    <h1>Demo</h1>
-    <p>
+    <div id="title">
+      <h1>Demo</h1>
       <table>
         <tr>
-          <th></th>
+          <th>Control</th>
           <th>Mouse</th>
           <th>Touch</th>
         </tr>
@@ -43,16 +53,16 @@
           <td></td>
         </tr>
       </table>
-    </p>
-    <div>
-      <label for="assembly">Assembly</label>
-      <select id="assembly">
-        <option value="bricks">Bricks</option>
-        <option value="computer">Computer</option>
-      </select>
-    </div>
-    <div>
-      <button id="fs">Full Screen</button>
+      <div>
+        <label for="assembly">Assembly</label>
+        <select id="assembly">
+          <option value="bricks">Bricks</option>
+          <option value="computer">Computer</option>
+        </select>
+      </div>
+      <div>
+        <button id="fs">Full Screen</button>
+      </div>
     </div>
     <div id="container"></div>
     <script src="bundle.js"></script>
