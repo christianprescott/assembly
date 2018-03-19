@@ -16,6 +16,8 @@ export default class App {
     camera.up.set(0, 0, 1)
     camera.position.set(0, -10, 0)
     camera.rotation.set(Math.PI / 2, 0, 0)
+    const cameraControls = new CameraControls(camera, renderer.domElement)
+    cameraControls.enablePan = false
     const scene = buildScene()
 
     const world = new World()
@@ -25,9 +27,39 @@ export default class App {
     Object.assign(this, { camera, renderer, scene, world })
   }
 
-  // TODO: clear previous contents, controls
+  _unload (assembly) {
+    const { scene, world } = this
+
+    this.dragControls.removeEventListener('dragstart', App._onDragStart)
+    this.dragControls.removeEventListener('drag', App._onDrag)
+    this.dragControls.removeEventListener('dragend', App._onDragEnd)
+    this.dragControls.deactivate()
+    this.rotateControls.removeEventListener('rotatestart', App._onDragStart)
+    this.rotateControls.removeEventListener('rotate', App._onRotate)
+    this.rotateControls.removeEventListener('rotateend', App._onDragEnd)
+    this.rotateControls.deactivate()
+
+    assembly.fixtures.forEach((f) => {
+      scene.remove(f)
+      world.removeBody(f.body)
+    })
+
+    assembly.components.forEach((c) => {
+      scene.remove(c)
+      c.body.removeEventListener('sleep', App._onBodySleep)
+      world.removeBody(c.body)
+      world.removeBody(c.dragBody)
+
+      world.constraints.forEach(con => world.removeConstraint(con))
+    })
+
+    this.assembly = null
+  }
+
   load (assembly) {
     const { camera, scene, renderer, world } = this
+
+    if (this.assembly) this._unload(this.assembly)
 
     assembly.components.forEach((c) => {
       scene.add(c)
@@ -49,16 +81,14 @@ export default class App {
       world.addBody(f.body)
     })
 
-    const dragControls = new DragControls(assembly.components, camera, renderer.domElement)
-    dragControls.addEventListener('dragstart', App._onDragStart)
-    dragControls.addEventListener('drag', App._onDrag)
-    dragControls.addEventListener('dragend', App._onDragEnd)
-    const rotateControls = new RotateControls(assembly.components, camera, renderer.domElement)
-    rotateControls.addEventListener('rotatestart', App._onDragStart)
-    rotateControls.addEventListener('rotate', App._onRotate)
-    rotateControls.addEventListener('rotateend', App._onDragEnd)
-    const cameraControls = new CameraControls(camera, renderer.domElement)
-    cameraControls.enablePan = false
+    this.dragControls = new DragControls(assembly.components, camera, renderer.domElement)
+    this.dragControls.addEventListener('dragstart', App._onDragStart)
+    this.dragControls.addEventListener('drag', App._onDrag)
+    this.dragControls.addEventListener('dragend', App._onDragEnd)
+    this.rotateControls = new RotateControls(assembly.components, camera, renderer.domElement)
+    this.rotateControls.addEventListener('rotatestart', App._onDragStart)
+    this.rotateControls.addEventListener('rotate', App._onRotate)
+    this.rotateControls.addEventListener('rotateend', App._onDragEnd)
 
     this.assembly = assembly
   }

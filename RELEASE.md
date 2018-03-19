@@ -34,7 +34,7 @@
 - [x] Target rotation
 
 ## v0.6.0
-- [-] compound collisions
+- [ ] compound collisions
     configure many body meshes per obj mesh
     identify meshes as one of
       box - 8 vertices, right angles
