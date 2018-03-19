@@ -1,0 +1,38 @@
+{
+  "components": {
+    "CPU" : {
+      "meshes": ["CPU"],
+      "bodies": ["CPU"]
+    },
+    "GPU" : {
+      "meshes": ["GPU"],
+      "bodies": [
+        "GPU.001",
+        "GPU.002"
+      ]
+    }
+  },
+  "fixtures": {
+    "Mainboard" : {
+      "meshes": ["Mainboard"],
+      "bodies": [
+        "Mainboard.001",
+        "Mainboard.002",
+        "Mainboard.003",
+        "Mainboard.004",
+        "Mainboard.005",
+        "Mainboard.006",
+        "Mainboard.007",
+        "Mainboard.008",
+        "Mainboard.009",
+        "Mainboard.010",
+        "Mainboard.011",
+        "Mainboard.012"
+      ]
+    }
+  },
+  "links": [
+    ["Mainboard", "CPU"],
+    ["Mainboard", "GPU"]
+  ]
+}

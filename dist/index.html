@@ -9,9 +9,7 @@
     </style>
   </head>
   <body>
-    <h1>Assembly</h1>
-    <p>Put the pieces back together!</p>
-    <h2>Controls</h2>
+    <h1>Demo</h1>
     <p>
       <table>
         <tr>
@@ -47,6 +45,13 @@
       </table>
     </p>
     <div>
+      <label for="assembly">Assembly</label>
+      <select id="assembly">
+        <option value="bricks">Bricks</option>
+        <option value="computer">Computer</option>
+      </select>
+    </div>
+    <div>
       <button id="fs">Full Screen</button>
     </div>
     <div id="container"></div>
@@ -56,20 +61,29 @@
       const app = new assembly.App(container)
       app.start()
 
-      // Load the scene
-      const objRequest = new XMLHttpRequest()
-      objRequest.open('GET', 'examples/bricks.obj')
-      const configRequest = new XMLHttpRequest()
-      configRequest.open('GET', 'examples/bricks.json')
-      configRequest.responseType = 'json'
-      configRequest.onload = function () {
-        app.load(assembly.Assembly.load(objRequest.response, configRequest.response))
+      function loadScene(scene) {
+        const objRequest = new XMLHttpRequest()
+        objRequest.open('GET', `examples/${scene}.obj`)
+        const configRequest = new XMLHttpRequest()
+        configRequest.open('GET', `examples/${scene}.json`)
+        configRequest.responseType = 'json'
+        configRequest.onload = function () {
+          app.load(assembly.Assembly.load(objRequest.response, configRequest.response))
+        }
+        objRequest.onload = function () {
+          configRequest.send()
+        }
+        objRequest.send()
       }
-      objRequest.onload = function () {
-        configRequest.send()
-      }
-      objRequest.send()
 
+      // Load the scene
+      const scene = document.getElementById('assembly').value
+      loadScene(scene)
+
+      document.getElementById('assembly').addEventListener(
+        'change',
+        function (e) { loadScene(e.target.value) }
+      )
       document.getElementById('fs').addEventListener(
         'click',
         function () { app.fullscreen() }
