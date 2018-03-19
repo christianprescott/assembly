@@ -12,6 +12,7 @@ const STATE = {
   NONE: -1,
   ROTATE: 0,
 }
+const UP = new Vector3(0, 0, 1)
 
 export default class RotateControls {
   enabled = true
@@ -25,7 +26,6 @@ export default class RotateControls {
   _raycaster = new Raycaster()
 
   _mouse = new Vector2()
-  _up = new Vector3()
   _right = new Vector3()
 
   _state = STATE.NONE
@@ -69,7 +69,6 @@ export default class RotateControls {
     this._raycaster.setFromCamera(this._mouse, this._camera)
     // TODO: this math falls apart when camera nears vertical
     this._right.crossVectors(this._camera.getWorldDirection(), this._camera.up)
-    this._up.crossVectors(this._right, this._camera.getWorldDirection())
   }
 
   _handleDragStart () {
@@ -88,7 +87,7 @@ export default class RotateControls {
   _handleDrag (event) {
     if (this._selected && this.enabled) {
       this._selected.rotateOnWorldAxis(
-        this._up,
+        UP,
         event.movementX / this._domElement.clientWidth * this.rotateSpeed,
       )
       this._selected.rotateOnWorldAxis(
