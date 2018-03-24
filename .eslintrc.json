@@ -5,7 +5,8 @@
     },
     "extends": "airbnb-base",
     "globals": {
-      "DEBUG": false
+      "DEBUG": false,
+      "expect": true
     },
     "parser": "babel-eslint",
     "plugins": ["mocha"],
