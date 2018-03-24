@@ -1,5 +1,6 @@
-import { Body, Box, Vec3 } from 'cannon'
+import { Body } from 'cannon'
 import { Box3, BoxGeometry, Mesh, MeshBasicMaterial, MeshToonMaterial, Object3D } from 'three'
+import shapeFromGeometry from './shapeFromGeometry'
 
 const MAT_FIXTURE = DEBUG ?
   new MeshBasicMaterial({ color: 0x202020, opacity: 0.3, transparent: true, wireframe: true }) :
@@ -26,12 +27,8 @@ export default class Fixture extends Object3D {
 
     // Add collision bodies to the object
     bodyGeometries.forEach((geometry) => {
-      geometry.computeBoundingBox()
-      const size = geometry.boundingBox.getSize()
-      const center = geometry.boundingBox.getCenter()
-      const shape = new Box(new Vec3(...size.toArray().map(v => v / 2)))
-      const offset = new Vec3(...center.toArray())
-      object.body.addShape(shape, offset)
+      const { shape, offset, orientation } = shapeFromGeometry(geometry)
+      object.body.addShape(shape, offset, orientation)
     })
 
     if (DEBUG) {
@@ -39,11 +36,13 @@ export default class Fixture extends Object3D {
       object.remove(...object.children)
       object.body.shapes.forEach((shape, i) => {
         const offset = object.body.shapeOffsets[i]
+        const orientation = object.body.shapeOrientations[i]
         const mesh = new Mesh(
           new BoxGeometry(...shape.halfExtents.toArray().map(s => s * 2)),
           MAT_FIXTURE,
         )
         mesh.position.set(...offset.toArray())
+        mesh.quaternion.set(...orientation.toArray())
         object.add(mesh)
       })
     }
