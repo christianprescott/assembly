@@ -60,7 +60,8 @@ on collisions between components and fixtures.
 Names of geometry objects that will be added to the physics world as rigid
 bodies. These objects are not rendered.
 
-Rigid body shapes are determined from bounding box of each named geometry.
+Rigid body geometry must be a box. If the box shape cannot be determined,
+geometry bounding box is used.
 
 #### `fixtures: Object`
 
