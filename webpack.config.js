@@ -24,6 +24,10 @@ module.exports = {
           'eslint-loader'
         ]
       },
+      {
+        test: /\.obj$/,
+        use: 'raw-loader'
+      },
       // three/examples/ do not support modules. Using imports-loader, provide
       // `three` as THREE to the example to define its contents, then import
       // from `three`.

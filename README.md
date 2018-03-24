@@ -12,6 +12,13 @@ cd dist && python -m SimpleHTTPServer 8080 # or whatever
 open http://localhost:8080
 ```
 
+## Test
+
+```sh
+npm run test
+open http://localhost:9876
+```
+
 ## Scene Configuration
 
 `Assembly.load(obj, config)` accepts two arguments to build the scene: the
