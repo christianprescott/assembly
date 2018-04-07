@@ -1,6 +1,20 @@
-import { Box, Quaternion, Vec3 } from 'cannon'
+import { Box } from 'cannon'
+import { Geometry, Vector3 } from 'three'
 import shapes from '../../test/fixtures/shapes'
 import shapeFromGeometry from '../shapeFromGeometry'
+
+function round (v) {
+  // default precision is 1e-6
+  return Math.round(v * 1e4) / 1e4
+}
+
+function sortArraysByValues (a, b) {
+  for (let i = 0; i < Math.min(a.length, b.length); i += 1) {
+    const diff = a[i] - b[i]
+    if (diff !== 0) return diff
+  }
+  return a.length - b.length
+}
 
 function unorderedEql (v1, v2) {
   const other = v2.map(v => v)
@@ -19,53 +33,65 @@ function unorderedEql (v1, v2) {
 
 describe('shapeFromGeometry', function () {
   // TODO: test offset
-  function recognizes (fixture, expectedExtents) {
-    context(fixture, function () {
-      const { shape } = shapeFromGeometry(shapes[fixture])
+  function recognizes (geometry, expectedExtents, expectedOffset) {
+    const { orientation, shape } = shapeFromGeometry(geometry)
 
-      it('recognizes as Box', function () {
-        expect(shape).to.be.instanceOf(Box)
-      })
+    it('recognizes as Box', function () {
+      expect(shape).to.be.instanceOf(Box)
+    })
 
-      it('sizes extents', function () {
-        // default precision is 1e-6
-        const round = v => Math.round(v * 1e4) / 1e4
-        unorderedEql(
-          shape.halfExtents.toArray().map(round),
-          expectedExtents.toArray().map(round).map(v => v / 2),
-        )
-      })
+    it('sizes extents', function () {
+      unorderedEql(
+        shape.halfExtents.toArray().map(round),
+        expectedExtents.toArray().map(round).map(v => v / 2),
+      )
+    })
 
-      // TODO: unpredicatable extents and axis alignment make this difficult to test
-      it.skip('orients', function () {
-      })
+    it('orients', function () {
+      const vertices = shape.convexPolyhedronRepresentation.vertices
+        .map(v => orientation.vmult(v))
+        .map(v => v.toArray().map(round))
+
+      const g = new Geometry().fromBufferGeometry(geometry)
+      g.mergeVertices()
+      const expectedVertices = g.vertices.map(v => v.sub(expectedOffset).toArray().map(round))
+
+      expect(vertices.sort(sortArraysByValues)).to.eql(expectedVertices.sort(sortArraysByValues))
     })
   }
 
   context('Box', () => {
-    recognizes(
-      'boxCube',
-      new Vec3(1.0, 1.0, 1.0),
-      new Quaternion(),
-    )
+    context('boxCube', function () {
+      recognizes(
+        shapes.boxCube,
+        new Vector3(1.0, 1.0, 1.0),
+        new Vector3(0, 0, 0),
+      )
+    })
 
-    recognizes(
-      'boxWide',
-      new Vec3(2.0, 1.0, 0.75),
-      new Quaternion(),
-    )
+    context('boxWide', function () {
+      recognizes(
+        shapes.boxWide,
+        new Vector3(2.0, 1.0, 0.75),
+        new Vector3(2, 0, 0),
+      )
+    })
 
-    recognizes(
-      'boxRotateSingleAxis',
-      new Vec3(2.0, 0.5, 0.1),
-      new Quaternion().setFromEuler(0, 0, -Math.PI / 6),
-    )
+    context('boxRotateSingleAxis', function () {
+      recognizes(
+        shapes.boxRotateSingleAxis,
+        new Vector3(2.0, 0.5, 0.1),
+        new Vector3(4, 0, 0),
+      )
+    })
 
-    recognizes(
-      'boxRotateMultiAxis',
-      new Vec3(2.0, 0.5, 0.1),
-      new Quaternion(),
-    )
+    context('boxRotateMultiAxis', function () {
+      recognizes(
+        shapes.boxRotateMultiAxis,
+        new Vector3(2.0, 0.5, 0.1),
+        new Vector3(6, 0, 0),
+      )
+    })
 
     // TODO: test non-box shapes boxTrapezoid and boxWarped
   })
