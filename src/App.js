@@ -1,5 +1,6 @@
 import { Body, LockConstraint, World } from 'cannon'
-import { Clock, PerspectiveCamera } from 'three'
+import { Clock, Object3D, PerspectiveCamera } from 'three'
+import VRButton from './VRButton'
 import buildScene from './buildScene'
 import DragControls from './DragControls'
 import CameraControls from './CameraControls'
@@ -7,24 +8,68 @@ import ResponsiveRenderer from './ResponsiveRenderer'
 import RotateControls from './RotateControls'
 
 export default class App {
+  assembly = null
+  camera = null
   clock = new Clock(false)
+  controls = []
+  renderer = null
+  scene = null
+  world = null
 
   constructor (parent) {
     const renderer = new ResponsiveRenderer(parent)
     renderer.shadowMap.enabled = true
-    const camera = new PerspectiveCamera(45, 1, 1, 1000)
-    camera.up.set(0, 0, 1)
-    camera.position.set(0, -10, 0)
-    camera.rotation.set(Math.PI / 2, 0, 0)
-    const cameraControls = new CameraControls(camera, renderer.domElement)
-    cameraControls.enablePan = false
     const scene = buildScene()
+    this.initPancake(renderer)
 
     const world = new World()
     world.gravity.set(0, 0, 0)
     world.allowSleep = true
 
-    Object.assign(this, { camera, renderer, scene, world })
+    const vrButton = new VRButton(parent, renderer)
+    vrButton.addEventListener('enter', this._onVRPresent)
+    vrButton.addEventListener('exit', this._onVRExit)
+
+    Object.assign(this, { renderer, scene, world })
+  }
+
+  // TODO: this state toggle is in desperate need of refactor
+  _onVRPresent = () => {
+    this.controls.forEach(c => c.dispose())
+    this._initVR()
+  }
+
+  _onVRExit = () => {
+    this.controls.forEach(c => c.dispose())
+    this.camera.parent.parent.remove(this.camera.parent)
+    this._initPancake()
+  }
+
+  _initPancake () {
+    // TODO: dispose previous VR controls
+    const camera = new PerspectiveCamera(45, 1, 1, 1000)
+    camera.up.set(0, 0, 1)
+    camera.position.set(0, -10, 0)
+    camera.rotation.set(Math.PI / 2, 0, 0)
+    const cameraControls = new CameraControls(camera, this.renderer.domElement)
+    cameraControls.enablePan = false
+    this.controls = [cameraControls]
+    this.camera = camera
+  }
+
+  _initVR () {
+    const dolly = new Object3D()
+    // TODO: set antialias, setPixelRatio, setSize, userHeight
+    // TODO: events: resize vrdisplaypointerrestricted vrdisplaypointerunrestricted
+    // TODO: consider FOV changes
+    const camera = new PerspectiveCamera(45, 1, 1, 1000)
+    dolly.up.set(0, 0, 1)
+    dolly.position.set(0, -4, 2)
+    dolly.rotation.set(Math.PI / 2, 0, 0)
+    dolly.add(camera)
+    this.scene.add(dolly)
+    this.controls = []
+    this.camera = camera
   }
 
   _unload (assembly) {
@@ -95,7 +140,7 @@ export default class App {
 
   start () {
     this.clock.start()
-    this._animate()
+    this.renderer.animate(this._animate)
   }
 
   fullscreen () {
@@ -105,7 +150,6 @@ export default class App {
   // private
 
   _animate = () => {
-    requestAnimationFrame(this._animate)
     const dt = this.clock.getDelta()
     this._update(dt)
     this._render()
