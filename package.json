@@ -1,14 +1,17 @@
 {
-  "name": "assembly",
+  "name": "assembly-app",
   "version": "0.5.1",
   "description": "",
-  "main": "index.js",
+  "main": "dist/assembly.min.js",
   "scripts": {
-    "build": "webpack",
+    "build": "WEBPACK_ENV=production webpack",
+    "dev": "webpack --watch",
+    "prepublishOnly": "eslint src && npm run build",
     "test": "karma start --single-run"
   },
   "author": "me@christianprescott.com",
   "license": "ISC",
+  "repository": "github:christianprescott/assembly",
   "dependencies": {
     "cannon": "github:schteppe/cannon.js",
     "fscreen": "^1.0.2",
@@ -19,6 +22,7 @@
     "@babel/preset-env": "^7.0.0-beta.39",
     "babel-eslint": "^8.2.1",
     "babel-loader": "^8.0.0-beta.0",
+    "babel-minify-webpack-plugin": "^0.3.1",
     "babel-plugin-transform-class-properties": "^6.24.1",
     "chai": "^4.1.2",
     "eslint": "^4.17.0",

@@ -1,10 +1,23 @@
 const path = require('path')
 const webpack = require('webpack')
+const MinifyPlugin = require('babel-minify-webpack-plugin')
+
+let filename = 'assembly.js'
+const plugins = [
+  new webpack.DefinePlugin({
+    DEBUG: JSON.stringify(process.env.ASSEMBLY_DEBUG)
+  })
+]
+
+if(process.env.WEBPACK_ENV === 'production') {
+  filename = 'assembly.min.js'
+  plugins.push(new MinifyPlugin())
+}
 
 module.exports = {
   entry: './src/index.js',
   output: {
-    filename: 'bundle.js',
+    filename: filename,
     library: 'assembly',
     path: path.resolve(__dirname, 'dist')
   },
@@ -37,9 +50,5 @@ module.exports = {
       }
     ]
   },
-  plugins: [
-    new webpack.DefinePlugin({
-      DEBUG: JSON.stringify(process.env.ASSEMBLY_DEBUG)
-    })
-  ]
+  plugins: plugins
 }
