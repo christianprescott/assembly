@@ -1,0 +1,7 @@
+node_modules
+/dist
+
+# Tests
+/test
+__tests__
+karma.conf.js
