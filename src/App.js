@@ -186,6 +186,7 @@ export default class App {
     camera.rotation.set(Math.PI / 2, 0, 0)
     const cameraControls = new CameraControls(camera, this.renderer.domElement)
     cameraControls.enablePan = false
+    this.scene.userData.floor.visible = false
     this.controls = [cameraControls]
     this.camera = camera
   }
@@ -214,6 +215,7 @@ export default class App {
     })
 
     this.scene.add(dolly)
+    this.scene.userData.floor.visible = true
     this.controls = [touchL, touchR]
     this.camera = camera
   }

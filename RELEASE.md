@@ -43,7 +43,7 @@
 - [x] VR, controls
 - [ ] Revisit scene units, camera clipping
     consider shadowmap and light position
-- [ ] floor plane
+- [x] floor plane
 
 ## Backlog
 - [ ] event emitter
