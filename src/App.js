@@ -1,11 +1,12 @@
 import { Body, LockConstraint, World } from 'cannon'
-import { Clock, Object3D, PerspectiveCamera } from 'three'
+import { BoxGeometry, Clock, Mesh, Object3D, PerspectiveCamera } from 'three'
 import VRButton from './VRButton'
 import buildScene from './buildScene'
 import DragControls from './DragControls'
 import CameraControls from './CameraControls'
 import ResponsiveRenderer from './ResponsiveRenderer'
 import RotateControls from './RotateControls'
+import TouchControls from './TouchControls'
 
 export default class App {
   assembly = null
@@ -117,6 +118,7 @@ export default class App {
   }
 
   _update (dt) {
+    this.controls.forEach(c => c.update())
     this.world.step(dt)
     if (this.assembly) {
       this.assembly.components.forEach((c) => {
@@ -178,7 +180,7 @@ export default class App {
 
   _initPancake () {
     // TODO: dispose previous VR controls
-    const camera = new PerspectiveCamera(45, 1, 1, 1000)
+    const camera = new PerspectiveCamera(45, 1, 0.05, 1000)
     camera.up.set(0, 0, 1)
     camera.position.set(0, -10, 0)
     camera.rotation.set(Math.PI / 2, 0, 0)
@@ -190,16 +192,27 @@ export default class App {
 
   _initVR () {
     const dolly = new Object3D()
-    // TODO: set antialias, setPixelRatio, setSize, userHeight
+    // TODO: set antialias, setPixelRatio, setSize, userHeight, standingMatrix
     // TODO: events: resize vrdisplaypointerrestricted vrdisplaypointerunrestricted
     // TODO: consider FOV changes
-    const camera = new PerspectiveCamera(45, 1, 1, 1000)
+    const camera = new PerspectiveCamera(45, 1, 0.05, 1000)
     dolly.up.set(0, 0, 1)
     dolly.position.set(0, -4, 2)
     dolly.rotation.set(Math.PI / 2, 0, 0)
     dolly.add(camera)
+
+    // TODO: button listeners
+    const touchL = new TouchControls(0)
+    const boxL = new Mesh(new BoxGeometry(0.04, 0.02, 0.1))
+    touchL.add(boxL)
+    dolly.add(touchL)
+    const touchR = new TouchControls(1)
+    const boxR = new Mesh(new BoxGeometry(0.04, 0.02, 0.1))
+    touchR.add(boxR)
+    dolly.add(touchR)
+
     this.scene.add(dolly)
-    this.controls = []
+    this.controls = [touchL, touchR]
     this.camera = camera
   }
 }

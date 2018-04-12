@@ -53,11 +53,11 @@ export default class CameraControls {
   enablePan = true
   keyPanSpeed = 7.0; // pixels moved per arrow key push
   // Set to true to enable damping (inertia)
-  // If damping is enabled, you must call controls.update() in your animation loop
+  // If damping is enabled, you must call controls._update() in your animation loop
   enableDamping = false
   dampingFactor = 0.25
   // Set to true to automatically rotate around the target
-  // If auto-rotate is enabled, you must call controls.update() in your animation loop
+  // If auto-rotate is enabled, you must call controls._update() in your animation loop
   autoRotate = false
   autoRotateSpeed = 2.0; // 30 seconds per round when fps is 60
 
@@ -148,7 +148,7 @@ export default class CameraControls {
     window.addEventListener('keydown', this.onKeyDown, false)
 
     this.saveState()
-    this.update()
+    this._update()
   }
 
   //
@@ -177,13 +177,17 @@ export default class CameraControls {
     this.object.updateProjectionMatrix()
     this.dispatchEvent(EVENT.CHANGE)
 
-    this.update()
+    this._update()
 
     this.state = STATE.NONE
   }
 
-  // this method is exposed, but perhaps it would be better if we can make it private...
+  // eslint-disable-next-line class-methods-use-this
   update () {
+    // TODO: nothing to do here, camera is updated by events
+  }
+
+  _update () {
     this.updateOffset.copy(this.object.position).sub(this.target)
     // rotate offset to "y-axis-is-up" space
     this.updateOffset.applyQuaternion(this.updateQuat)
@@ -363,7 +367,7 @@ export default class CameraControls {
     // rotating up and down along whole screen attempts to go 360, but limited to 180
     this.rotateUp(2 * Math.PI * event.movementY / element.clientHeight * this.rotateSpeed)
 
-    this.update()
+    this._update()
   }
 
   handleMouseMoveDolly (event) {
@@ -372,12 +376,12 @@ export default class CameraControls {
     } else if (event.movementY < 0) {
       this.dollyOut(this.getZoomScale())
     }
-    this.update()
+    this._update()
   }
 
   handleMouseMovePan (event) {
     this.pan(event.movementX, event.movementY)
-    this.update()
+    this._update()
   }
 
   handleMouseWheel (event) {
@@ -387,26 +391,26 @@ export default class CameraControls {
       this.dollyIn(this.getZoomScale())
     }
 
-    this.update()
+    this._update()
   }
 
   handleKeyDown (event) {
     switch (event.keyCode) {
       case this.keys.UP:
         this.pan(0, this.keyPanSpeed)
-        this.update()
+        this._update()
         break
       case this.keys.BOTTOM:
         this.pan(0, -this.keyPanSpeed)
-        this.update()
+        this._update()
         break
       case this.keys.LEFT:
         this.pan(this.keyPanSpeed, 0)
-        this.update()
+        this._update()
         break
       case this.keys.RIGHT:
         this.pan(-this.keyPanSpeed, 0)
-        this.update()
+        this._update()
         break
       default:
         // nothing
@@ -439,7 +443,7 @@ export default class CameraControls {
     this.rotateUp(2 * Math.PI * this.rotateDelta.y / element.clientHeight * this.rotateSpeed)
 
     this.rotateStart.copy(this.rotateEnd)
-    this.update()
+    this._update()
   }
 
   handleTouchMoveDolly (event) {
@@ -456,7 +460,7 @@ export default class CameraControls {
     }
 
     this.dollyStart.copy(this.dollyEnd)
-    this.update()
+    this._update()
   }
 
   handleTouchMovePan (event) {
@@ -465,7 +469,7 @@ export default class CameraControls {
     this.pan(this.panDelta.x, this.panDelta.y)
 
     this.panStart.copy(this.panEnd)
-    this.update()
+    this._update()
   }
 
   //
