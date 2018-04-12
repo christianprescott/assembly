@@ -78,7 +78,7 @@
         configRequest.open('GET', `examples/${scene}.json`)
         configRequest.responseType = 'json'
         configRequest.onload = function () {
-          app.load(assembly.Assembly.load(objRequest.response, configRequest.response))
+          app.load(assembly.Assembly.create(objRequest.response, configRequest.response))
         }
         objRequest.onload = function () {
           configRequest.send()

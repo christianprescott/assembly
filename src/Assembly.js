@@ -5,7 +5,7 @@ import Fixture from './Fixture'
 import Link from './Link'
 
 export default class Assembly {
-  static load (obj, config) {
+  static create (obj, config) {
     const group = new OBJLoader().parse(obj)
 
     // Key geometries by unique name

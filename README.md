@@ -21,7 +21,7 @@ open http://localhost:9876
 
 ## Scene Configuration
 
-`Assembly.load(obj, config)` accepts two arguments to build the scene: the
+`Assembly.create(obj, config)` accepts two arguments to build the scene: the
 geometry definition and a sidecar configuration object. See dist/examples for
 samples.
 
