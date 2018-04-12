@@ -2,9 +2,10 @@
   "name": "assembly-app",
   "version": "0.5.2",
   "description": "",
-  "main": "dist/assembly.min.js",
+  "main": "lib/index.js",
+  "module": "src/index.js",
   "scripts": {
-    "build": "WEBPACK_ENV=production webpack",
+    "build": "babel src --out-dir lib",
     "dev": "webpack --watch",
     "prepublishOnly": "eslint src && npm run build",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -18,8 +19,9 @@
     "three": "^0.89.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.0.0-beta.39",
-    "@babel/preset-env": "^7.0.0-beta.39",
+    "@babel/cli": "^7.0.0-beta.44",
+    "@babel/core": "^7.0.0-beta.44",
+    "@babel/preset-env": "^7.0.0-beta.44",
     "babel-eslint": "^8.2.1",
     "babel-loader": "^8.0.0-beta.0",
     "babel-minify-webpack-plugin": "^0.3.1",

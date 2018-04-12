@@ -10,7 +10,9 @@ node_modules/
 jspm_packages/
 
 # Webpack build
-dist/*.js
+/dist/*.js
+# Transpiled source
+/lib
 
 # Optional npm cache directory
 .npm
