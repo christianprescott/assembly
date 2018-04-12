@@ -201,15 +201,17 @@ export default class App {
     dolly.rotation.set(Math.PI / 2, 0, 0)
     dolly.add(camera)
 
-    // TODO: button listeners
-    const touchL = new TouchControls(0)
-    const boxL = new Mesh(new BoxGeometry(0.04, 0.02, 0.1))
-    touchL.add(boxL)
-    dolly.add(touchL)
-    const touchR = new TouchControls(1)
-    const boxR = new Mesh(new BoxGeometry(0.04, 0.02, 0.1))
-    touchR.add(boxR)
-    dolly.add(touchR)
+    const [touchL, touchR] = [0, 1].map((index) => {
+      const touch = new TouchControls(index, this.assembly.components)
+      touch.addEventListener('dragstart', App._onDragStart)
+      touch.addEventListener('drag', App._onDrag)
+      touch.addEventListener('dragend', App._onDragEnd)
+      touch.addEventListener('rotate', App._onRotate)
+      const box = new Mesh(new BoxGeometry(0.02, 0.02, 0.02))
+      touch.add(box)
+      dolly.add(touch)
+      return touch
+    })
 
     this.scene.add(dolly)
     this.controls = [touchL, touchR]

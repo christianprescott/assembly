@@ -40,7 +40,7 @@
 
 ## v???
 - [x] VR, display
-- [ ] VR, controls
+- [x] VR, controls
 - [ ] Revisit scene units, camera clipping
     consider shadowmap and light position
 - [ ] floor plane

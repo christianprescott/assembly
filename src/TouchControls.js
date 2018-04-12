@@ -5,7 +5,14 @@
  * @author stewdio / http://stewd.io
  */
 
-import { EventDispatcher, Matrix4, Object3D } from 'three'
+import {
+  EventDispatcher,
+  Matrix4,
+  Object3D,
+  Quaternion,
+  Raycaster,
+  Vector3,
+} from 'three'
 
 export default class TouchControls extends Object3D {
   static findGamepad (id) {
@@ -27,6 +34,7 @@ export default class TouchControls extends Object3D {
     return undefined
   }
 
+  gamepadId = null
   gamepad = null
 
   axes = [0, 0]
@@ -35,11 +43,28 @@ export default class TouchControls extends Object3D {
   gripsArePressed = false
   menuIsPressed = false
 
-  constructor (id) {
+  _objects = []
+  _raycaster = new Raycaster()
+  _selected = null
+  _offsetPosition = new Vector3()
+  _offsetQuaternion = new Quaternion()
+  _posePosition = new Vector3()
+  _poseOrientation = new Quaternion()
+
+  constructor (id, _objects) {
     super()
     this.gamepadId = id
     this.matrixAutoUpdate = false
     this.standingMatrix = new Matrix4()
+    this._objects = _objects
+    this.activate()
+  }
+
+  activate () {
+    this.addEventListener('triggerdown', this._onTriggerDown, false)
+    this.addEventListener('triggerup', this._onTriggerUp, false)
+    this.addEventListener('positionchange', this._onPositionChange, false)
+    this.addEventListener('quaternionchange', this._onQuaternionChange, false)
   }
 
   // eslint-disable-next-line class-methods-use-this
@@ -69,9 +94,20 @@ export default class TouchControls extends Object3D {
       //  Position and orientation.
 
       const { pose } = gamepad
-
-      if (pose.position !== null) this.position.fromArray(pose.position)
-      if (pose.orientation !== null) this.quaternion.fromArray(pose.orientation)
+      if (pose.orientation !== null) {
+        this._poseOrientation.fromArray(pose.orientation)
+        if (!this.quaternion.equals(this._poseOrientation)) {
+          this.quaternion.copy(this._poseOrientation)
+          this.dispatchEvent({ type: 'quaternionchange', quaternion: this._poseOrientation })
+        }
+      }
+      if (pose.position !== null) {
+        this._posePosition.fromArray(pose.position)
+        if (!this.position.equals(this._posePosition)) {
+          this.position.copy(this._posePosition)
+          this.dispatchEvent({ type: 'positionchange', position: this._posePosition })
+        }
+      }
       this.matrix.compose(this.position, this.quaternion, this.scale)
       this.matrix.premultiply(this.standingMatrix)
       this.matrixWorldNeedsUpdate = true
@@ -109,6 +145,70 @@ export default class TouchControls extends Object3D {
       }
     } else {
       this.visible = false
+    }
+  }
+
+  // private
+
+  _updateRaycaster () {
+    // TODO: revisit methods of selection detection. Maybe cast a second ray in
+    // the opposite direction?
+    // TODO: set raycaster.far for control distance
+    this._raycaster.ray.origin.copy(this.position)
+    this.getWorldPosition(this._raycaster.ray.origin)
+    this._raycaster.ray.direction.copy(new Vector3(0, 0, 1))
+  }
+
+  _handleDragStart () {
+    // Intersected meshes are children of the Component, so we intersect
+    // recursively and reference parent
+    const intersects = this._raycaster.intersectObjects(this._objects, true)
+
+    if (intersects.length > 0) {
+      this._selected = intersects[0].object.parent
+
+      this._offsetPosition.copy(this._selected.position)
+      this.worldToLocal(this._offsetPosition)
+
+      this._offsetQuaternion.copy(this.quaternion)
+      this.getWorldQuaternion(this._offsetQuaternion)
+      this._offsetQuaternion.inverse()
+      this._offsetQuaternion.multiply(this._selected.quaternion)
+
+      this.dispatchEvent({ type: 'dragstart', object: this._selected })
+    }
+  }
+
+  _handleDragEnd () {
+    if (this._selected) {
+      this.dispatchEvent({ type: 'dragend', object: this._selected })
+      this._selected = null
+    }
+  }
+
+  _onTriggerDown = () => {
+    this._updateRaycaster()
+    this._handleDragStart()
+  }
+
+  _onTriggerUp = () => {
+    this._handleDragEnd()
+  }
+
+  _onPositionChange = () => {
+    if (this._selected) {
+      this._selected.position.copy(this._offsetPosition)
+      this.localToWorld(this._selected.position)
+      this.dispatchEvent({ type: 'drag', object: this._selected })
+    }
+  }
+
+  _onQuaternionChange = (event) => {
+    if (this._selected) {
+      this._selected.quaternion.copy(event.quaternion)
+      this.getWorldQuaternion(this._selected.quaternion)
+      this._selected.quaternion.multiply(this._offsetQuaternion)
+      this.dispatchEvent({ type: 'rotate', object: this._selected })
     }
   }
 }
