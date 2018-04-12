@@ -56,6 +56,8 @@ export default class App {
       world.addBody(f.body)
     })
 
+    // TODO: include these in controls disabled for VR
+    // TODO: initialize these and other controls only on start
     this.dragControls = new DragControls(assembly.components, camera, renderer.domElement)
     this.dragControls.addEventListener('dragstart', App._onDragStart)
     this.dragControls.addEventListener('drag', App._onDrag)

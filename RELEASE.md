@@ -34,18 +34,25 @@
 - [x] Target rotation
 
 ## v0.6.0
-- [ ] compound collisions
+- [x] compound collisions
     configure many body meshes per obj mesh
-    identify meshes as one of
-      box - 8 vertices, right angles
-      sphere - all vertices (max - min) distance from center of bounding box
-- [ ] shuffle components
+- [x] body shapes, box, 8 vertices at right angles
+
+## v???
+- [x] VR, display
+- [ ] VR, controls
 - [ ] Revisit scene units, camera clipping
     consider shadowmap and light position
+- [ ] floor plane
 
 ## Backlog
-- [ ] group linked components, additional grab handle appears for group
 - [ ] event emitter
+- [ ] shuffle components
+- [ ] group linked components, additional grab handle appears for group
+- [ ] body shapes, sphere, all vertices (max - min) distance from center of bounding box
+- [ ] body shapes, cylinder
+- [ ] controls, refine dragging
+- [ ] materials, color
 - [ ] physics, optional gravity
 - [ ] constrain workspace, camera
 - [ ] Margin of error for target position and rotation
@@ -56,10 +63,8 @@
 - [ ] animation, indication for unplaced components
 - [ ] component name tooltip
 - [ ] toon outline
-- [ ] materials, color
 - [ ] Optional snap to position during drag or drag release
 - [ ] "optional" links - accept one of several positions
-- [ ] VR
 
 ## Notes
 
