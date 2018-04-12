@@ -17,20 +17,18 @@ export default class App {
   world = null
 
   constructor (parent) {
-    const renderer = new ResponsiveRenderer(parent)
-    renderer.shadowMap.enabled = true
-    const scene = buildScene()
-    this.initPancake(renderer)
+    this.renderer = new ResponsiveRenderer(parent)
+    this.renderer.shadowMap.enabled = true
+    this.scene = buildScene()
+    this._initPancake()
 
-    const world = new World()
-    world.gravity.set(0, 0, 0)
-    world.allowSleep = true
+    this.world = new World()
+    this.world.gravity.set(0, 0, 0)
+    this.world.allowSleep = true
 
-    const vrButton = new VRButton(parent, renderer)
+    const vrButton = new VRButton(parent, this.renderer)
     vrButton.addEventListener('enter', this._onVRPresent)
     vrButton.addEventListener('exit', this._onVRExit)
-
-    Object.assign(this, { renderer, scene, world })
   }
 
   load (assembly) {
