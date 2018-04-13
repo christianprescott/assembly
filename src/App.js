@@ -1,5 +1,5 @@
 import { Body, LockConstraint, World } from 'cannon'
-import { Clock, Object3D, PerspectiveCamera } from 'three'
+import { Clock, EventDispatcher, Object3D, PerspectiveCamera } from 'three'
 import VRButton from './VRButton'
 import buildScene from './buildScene'
 import DragControls from './DragControls'
@@ -47,7 +47,6 @@ export default class App {
 
     assembly.components.forEach((c) => {
       scene.add(c)
-      c.body.addEventListener('sleep', App._onBodySleep)
       world.addBody(c.body)
       world.addBody(c.dragBody)
 
@@ -58,6 +57,12 @@ export default class App {
         { maxForce: 10 },
       )
       world.addConstraint(constraint)
+
+      // Constraint base class wakes up both bodies when instantiated. Its
+      // wakeUpBodies option allows this behavior to be disabled but subclass
+      // LockConstraint does not pass its options to the parent class.
+      c.body.sleep()
+      c.body.addEventListener('sleep', this._onBodySleep)
     })
 
     assembly.fixtures.forEach((f) => {
@@ -68,13 +73,13 @@ export default class App {
     // TODO: include these in controls disabled for VR
     // TODO: initialize these and other controls only on start
     this.dragControls = new DragControls(assembly.components, camera, renderer.domElement)
-    this.dragControls.addEventListener('dragstart', App._onDragStart)
-    this.dragControls.addEventListener('drag', App._onDrag)
-    this.dragControls.addEventListener('dragend', App._onDragEnd)
+    this.dragControls.addEventListener('dragstart', this._onDragStart)
+    this.dragControls.addEventListener('drag', this._onDrag)
+    this.dragControls.addEventListener('dragend', this._onDragEnd)
     this.rotateControls = new RotateControls(assembly.components, camera, renderer.domElement)
-    this.rotateControls.addEventListener('rotatestart', App._onDragStart)
-    this.rotateControls.addEventListener('rotate', App._onRotate)
-    this.rotateControls.addEventListener('rotateend', App._onDragEnd)
+    this.rotateControls.addEventListener('rotatestart', this._onDragStart)
+    this.rotateControls.addEventListener('rotate', this._onRotate)
+    this.rotateControls.addEventListener('rotateend', this._onDragEnd)
 
     this.assembly = assembly
   }
@@ -93,13 +98,13 @@ export default class App {
   _unload (assembly) {
     const { scene, world } = this
 
-    this.dragControls.removeEventListener('dragstart', App._onDragStart)
-    this.dragControls.removeEventListener('drag', App._onDrag)
-    this.dragControls.removeEventListener('dragend', App._onDragEnd)
+    this.dragControls.removeEventListener('dragstart', this._onDragStart)
+    this.dragControls.removeEventListener('drag', this._onDrag)
+    this.dragControls.removeEventListener('dragend', this._onDragEnd)
     this.dragControls.deactivate()
-    this.rotateControls.removeEventListener('rotatestart', App._onDragStart)
-    this.rotateControls.removeEventListener('rotate', App._onRotate)
-    this.rotateControls.removeEventListener('rotateend', App._onDragEnd)
+    this.rotateControls.removeEventListener('rotatestart', this._onDragStart)
+    this.rotateControls.removeEventListener('rotate', this._onRotate)
+    this.rotateControls.removeEventListener('rotateend', this._onDragEnd)
     this.rotateControls.deactivate()
 
     assembly.fixtures.forEach((f) => {
@@ -109,7 +114,7 @@ export default class App {
 
     assembly.components.forEach((c) => {
       scene.remove(c)
-      c.body.removeEventListener('sleep', App._onBodySleep)
+      c.body.removeEventListener('sleep', this._onBodySleep)
       world.removeBody(c.body)
       world.removeBody(c.dragBody)
 
@@ -141,37 +146,42 @@ export default class App {
     renderer.render(scene, camera)
   }
 
-  static _onDragStart (event) {
+  _onDragStart = (event) => {
     const component = event.object
     const { body } = component
     body.type = Body.DYNAMIC
     body.allowSleep = false
     body.wakeUp()
+    this.dispatchEvent({ type: 'dragstart', component })
   }
 
-  static _onDrag (event) {
+  _onDrag = (event) => {
     const component = event.object
     const { dragBody, position } = component
     toCannon(position, dragBody.position)
     component.testLinks()
+    this.dispatchEvent({ type: 'drag', component })
   }
 
-  static _onDragEnd (event) {
+  _onDragEnd = (event) => {
     const component = event.object
     const { body } = component
     body.allowSleep = true
   }
 
-  static _onBodySleep (event) {
+  _onBodySleep = (event) => {
     const body = event.target
     body.type = Body.STATIC
     body.component.testLinks()
+    // Public event dispatches after body is at rest to avoid confusion with bodies
+    this.dispatchEvent({ type: 'dragend', component: body.component })
   }
 
-  static _onRotate (event) {
+  _onRotate = (event) => {
     const component = event.object
     const { dragBody, quaternion } = component
     dragBody.quaternion.set(...quaternion.toArray())
+    this.dispatchEvent({ type: 'rotate', component })
   }
 
   // TODO: this state toggle is in desperate need of refactor
@@ -212,10 +222,10 @@ export default class App {
 
     const [touchL, touchR] = [0, 1].map((index) => {
       const touch = new TouchControls(index, this.assembly.components)
-      touch.addEventListener('dragstart', App._onDragStart)
-      touch.addEventListener('drag', App._onDrag)
-      touch.addEventListener('dragend', App._onDragEnd)
-      touch.addEventListener('rotate', App._onRotate)
+      touch.addEventListener('dragstart', this._onDragStart)
+      touch.addEventListener('drag', this._onDrag)
+      touch.addEventListener('dragend', this._onDragEnd)
+      touch.addEventListener('rotate', this._onRotate)
       dolly.add(touch)
       return touch
     })
@@ -226,3 +236,5 @@ export default class App {
     this.camera = camera
   }
 }
+
+Object.assign(App.prototype, EventDispatcher.prototype)

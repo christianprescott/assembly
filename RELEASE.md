@@ -46,7 +46,7 @@
 - [x] floor plane
 
 ## v0.8.0
-- [ ] event emitter
+- [x] event emitter
 - [ ] shuffle components
 
 ## Backlog
