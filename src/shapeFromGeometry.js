@@ -105,7 +105,7 @@ export default function shapeFromGeometry (bufferGeometry) {
 
   // Not recognized as a supported shape - return a simple bounding box
   const size = geometry.boundingBox.getSize()
-  const shape = new Box(new Vec3(...size.toArray().map(v => v / 2)))
+  const shape = new Box(toCannon(size.divideScalar(2)))
   const orientation = new CannonQuaternion()
   return { shape, offset, orientation }
 }
