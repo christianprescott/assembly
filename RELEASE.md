@@ -38,16 +38,19 @@
     configure many body meshes per obj mesh
 - [x] body shapes, box, 8 vertices at right angles
 
-## v???
+## v0.7.0
 - [x] VR, display
 - [x] VR, controls
 - [x] Revisit scene units, camera clipping
     consider shadowmap and light position
 - [x] floor plane
 
-## Backlog
+## v0.8.0
 - [ ] event emitter
 - [ ] shuffle components
+
+## Backlog
+- [ ] intelligent camera position and orbit at assembly bounds and center
 - [ ] group linked components, additional grab handle appears for group
 - [ ] body shapes, sphere, all vertices (max - min) distance from center of bounding box
 - [ ] body shapes, cylinder
