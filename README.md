@@ -34,7 +34,9 @@ desired position.
 Define geometry for both the rendered scene and physics rigid bodies, the
 configuration object will define each object's role.
 
-Objects are rendered Z up and Y forward.
+Geometry units are meters and scale is important for convincing VR experience.
+Objects are rendered Z up and Y forward. In hindsight this is nonstandard and
+was a poor decision.
 
 ### `config: Object`
 

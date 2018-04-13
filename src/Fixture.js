@@ -1,6 +1,7 @@
 import { Body } from 'cannon'
 import { Box3, BoxGeometry, Mesh, MeshBasicMaterial, MeshToonMaterial, Object3D } from 'three'
 import shapeFromGeometry from './shapeFromGeometry'
+import { toCannon, toThree } from './scale'
 
 const MAT_FIXTURE = DEBUG ?
   new MeshBasicMaterial({ color: 0x202020, opacity: 0.3, transparent: true, wireframe: true }) :
@@ -38,17 +39,17 @@ export default class Fixture extends Object3D {
         const offset = object.body.shapeOffsets[i]
         const orientation = object.body.shapeOrientations[i]
         const mesh = new Mesh(
-          new BoxGeometry(...shape.halfExtents.toArray().map(s => s * 2)),
+          new BoxGeometry(...toThree(shape.halfExtents).multiplyScalar(2).toArray()),
           MAT_FIXTURE,
         )
-        mesh.position.set(...offset.toArray())
+        toThree(offset, mesh.position)
         mesh.quaternion.set(...orientation.toArray())
         object.add(mesh)
       })
     }
 
     object.position.copy(position)
-    object.body.position.set(...position.toArray())
+    toCannon(position, object.body.position)
     return object
   }
 

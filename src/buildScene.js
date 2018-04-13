@@ -9,16 +9,17 @@ import {
   Scene,
 } from 'three'
 
+const ROOM_SIZE = 2
+
 function buildFloor () {
-  // a grid with side length size and count grid lines per axis
-  const size = 2
+  // a grid with side length ROOM_SIZE and count grid lines per axis
   const count = 10
   const floor = new Object3D()
   floor.visible = false
-  const geometry = new PlaneGeometry(0.02, size)
+  const geometry = new PlaneGeometry(0.02, ROOM_SIZE)
   const material = new MeshToonMaterial({ color: 0x222222 })
   for (let i = 0; i < count; i += 1) {
-    const x = ((i / (count - 1)) * size) - (size / 2)
+    const x = ((i / (count - 1)) * ROOM_SIZE) - (ROOM_SIZE / 2)
     const lineY = new Mesh(geometry, material)
     lineY.position.set(x, 0, 0)
     floor.add(lineY)
@@ -42,6 +43,12 @@ export default function () {
   const shadowLight = new DirectionalLight(0xffffff, 0.2)
   shadowLight.position.set(0, 0, 10)
   shadowLight.castShadow = true
+  shadowLight.shadow.mapSize.width = 1024
+  shadowLight.shadow.mapSize.height = 1024
+  shadowLight.shadow.camera.left = ROOM_SIZE / -2
+  shadowLight.shadow.camera.bottom = ROOM_SIZE / -2
+  shadowLight.shadow.camera.right = ROOM_SIZE / 2
+  shadowLight.shadow.camera.top = ROOM_SIZE / 2
   scene.add(ambientLight, directionalLight, shadowLight)
 
   const floor = buildFloor()

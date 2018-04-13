@@ -5,10 +5,11 @@
       "bodies": ["CPU"]
     },
     "GPU" : {
-      "meshes": ["GPU"],
+      "meshes": ["GPU", "GPU.Heatsink", "GPU.Fan"],
       "bodies": [
-        "GPU.001",
-        "GPU.002"
+        "GPU.Body.Card",
+        "GPU.Body.Pins",
+        "GPU.Body.Ports"
       ]
     }
   },

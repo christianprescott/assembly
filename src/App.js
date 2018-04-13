@@ -7,6 +7,7 @@ import CameraControls from './CameraControls'
 import ResponsiveRenderer from './ResponsiveRenderer'
 import RotateControls from './RotateControls'
 import TouchControls from './TouchControls'
+import { toCannon, toThree } from './scale'
 
 export default class App {
   assembly = null
@@ -122,7 +123,7 @@ export default class App {
     this.world.step(dt)
     if (this.assembly) {
       this.assembly.components.forEach((c) => {
-        c.position.copy(c.body.position)
+        toThree(c.body.position, c.position)
         c.quaternion.copy(c.body.quaternion)
       })
     }
@@ -144,7 +145,7 @@ export default class App {
   static _onDrag (event) {
     const component = event.object
     const { dragBody, position } = component
-    dragBody.position.set(...position.toArray())
+    toCannon(position, dragBody.position)
     component.testLinks()
   }
 
@@ -180,9 +181,9 @@ export default class App {
 
   _initPancake () {
     // TODO: dispose previous VR controls
-    const camera = new PerspectiveCamera(45, 1, 0.05, 1000)
+    const camera = new PerspectiveCamera(45, 1, 0.05, 40)
     camera.up.set(0, 0, 1)
-    camera.position.set(0, -10, 0)
+    camera.position.set(0, -0.5, 0.5)
     camera.rotation.set(Math.PI / 2, 0, 0)
     const cameraControls = new CameraControls(camera, this.renderer.domElement)
     cameraControls.enablePan = false
@@ -196,9 +197,9 @@ export default class App {
     // TODO: set antialias, setPixelRatio, setSize, userHeight, standingMatrix
     // TODO: events: resize vrdisplaypointerrestricted vrdisplaypointerunrestricted
     // TODO: consider FOV changes
-    const camera = new PerspectiveCamera(45, 1, 0.05, 1000)
+    const camera = new PerspectiveCamera(45, 1, 0.05, 40)
     dolly.up.set(0, 0, 1)
-    dolly.position.set(0, -4, 2)
+    dolly.position.set(0, -0.5, 0.5)
     dolly.rotation.set(Math.PI / 2, 0, 0)
     dolly.add(camera)
 

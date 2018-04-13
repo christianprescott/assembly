@@ -10,14 +10,15 @@ import {
   Vector3,
 } from 'three'
 import Component from './Component'
+import { toThree } from './scale'
 
-const MAT_LINE = new LineDashedMaterial({ color: 0x22ccff, dashSize: 0.05, gapSize: 0.15 })
+const MAT_LINE = new LineDashedMaterial({ color: 0x22ccff, dashSize: 0.015, gapSize: 0.005 })
 const MAT_ARROW = new MeshBasicMaterial({ color: 0x22ccff, wireframe: true })
 const MAT_ARROW_LINKED = new MeshBasicMaterial({ color: 0x22ff22, wireframe: true })
 const GEO_ARROW = new Geometry().setFromPoints([
   new Vector3(0, 0, 0),
   new Vector3(0, 0, 1),
-  new Vector3(0, 0.1, 0),
+  new Vector3(0, 0.01, 0),
 ])
 GEO_ARROW.faces.push(new Face3(0, 1, 2))
 const POINT = [
@@ -90,14 +91,15 @@ export default class Link extends Object3D {
 
   test () {
     // from objectA THREE Object3D to objectB CANNON Body
-    const distance = this.getWorldPosition().distanceTo(this.objectB.body.position)
+    const distance = this.getWorldPosition().distanceTo(toThree(this.objectB.body.position))
     const [axis, angle] = this.objectB.body.quaternion.toAxisAngle()
     if (DEBUG) {
       // Position distance
-      this.line.geometry.vertices[1].subVectors(this.objectB.body.position, this.getWorldPosition())
-      this.line.geometry.verticesNeedUpdate = true
-      this.line.geometry.lineDistancesNeedUpdate = true
-      this.line.geometry.computeLineDistances()
+      const lineGeo = this.line.geometry
+      toThree(this.objectB.body.position, lineGeo.vertices[1]).sub(this.getWorldPosition())
+      lineGeo.verticesNeedUpdate = true
+      lineGeo.lineDistancesNeedUpdate = true
+      lineGeo.computeLineDistances()
       // Rotation distance
       // TODO: This doesn't quite point in the direction it should... but the curve with
       // angle is useful
@@ -106,9 +108,9 @@ export default class Link extends Object3D {
       this.arc.geometry.verticesNeedUpdate = true
       this.arc.quaternion.setFromAxisAngle(new Vector3(0, 0, 1).cross(axis), Math.PI / 2)
 
-      this.arrowMesh.material = distance < 0.05 ? MAT_ARROW_LINKED : MAT_ARROW
+      this.arrowMesh.material = distance < 0.01 ? MAT_ARROW_LINKED : MAT_ARROW
       this.arc.material = angle < 0.05 ? MAT_ARROW_LINKED : MAT_ARROW
     }
-    return distance < 0.05 && angle < 0.05
+    return distance < 0.01 && angle < 0.05
   }
 }

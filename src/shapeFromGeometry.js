@@ -1,5 +1,6 @@
 import { Box, Quaternion as CannonQuaternion, Vec3 } from 'cannon'
 import { Geometry, Quaternion, Vector3 } from 'three'
+import { toCannon } from './scale'
 
 function testForBox (geometry, vertexConnectedFaces) {
   // Reject geometry without exactly 8 vertices
@@ -34,7 +35,7 @@ export default function shapeFromGeometry (bufferGeometry) {
   geometry.mergeVertices()
   geometry.computeBoundingBox()
   const center = geometry.boundingBox.getCenter()
-  const offset = new Vec3(...center.toArray())
+  const offset = toCannon(center)
 
   // Build map of vertex to vertices connected by adjacent faces
   const vertexConnectedFaces = {}
@@ -83,7 +84,7 @@ export default function shapeFromGeometry (bufferGeometry) {
     const vX = vertices[extentIndices[0]].clone().sub(vA)
     const vY = vertices[extentIndices[1]].clone().sub(vA)
     const vZ = vertices[extentIndices[2]].clone().sub(vA)
-    const halfExtents = new Vec3(vX.length() / 2, vY.length() / 2, vZ.length() / 2)
+    const halfExtents = toCannon(new Vector3(vX.length(), vY.length(), vZ.length()).divideScalar(2))
     const shape = new Box(halfExtents)
     // Rotate box to align the X axis with the geometry...
     const alignX = new Quaternion()
