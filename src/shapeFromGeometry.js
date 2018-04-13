@@ -1,4 +1,4 @@
-import { Box, Quaternion as CannonQuaternion, Vec3 } from 'cannon'
+import { Box, Quaternion as CannonQuaternion } from 'cannon'
 import { Geometry, Quaternion, Vector3 } from 'three'
 import { toCannon } from './scale'
 
