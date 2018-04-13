@@ -8,11 +8,21 @@
 import {
   EventDispatcher,
   Matrix4,
+  Mesh,
   Object3D,
   Quaternion,
   Raycaster,
+  SphereGeometry,
   Vector3,
 } from 'three'
+
+const SQUEEZE_THRESHOLD = 0.8
+const BUTTON_MAP = {
+  0: 'thumbpad',
+  1: 'trigger',
+  2: 'grip',
+  3: 'menu',
+}
 
 export default class TouchControls extends Object3D {
   static findGamepad (id) {
@@ -39,9 +49,15 @@ export default class TouchControls extends Object3D {
 
   axes = [0, 0]
   thumbpadIsPressed = false
+  thumbpadValue = 0.0
   triggerIsPressed = false
-  gripsArePressed = false
+  triggerValue = 0.0
+  gripIsPressed = false
+  gripsValue = 0.0
   menuIsPressed = false
+  menuValue = 0.0
+
+  squeezeValue = 0.0
 
   _objects = []
   _raycaster = new Raycaster()
@@ -57,12 +73,14 @@ export default class TouchControls extends Object3D {
     this.matrixAutoUpdate = false
     this.standingMatrix = new Matrix4()
     this._objects = _objects
+    this.ball = new Mesh(new SphereGeometry(0.02, 8, 8))
+    this.add(this.ball)
     this.activate()
   }
 
   activate () {
-    this.addEventListener('triggerdown', this._onTriggerDown, false)
-    this.addEventListener('triggerup', this._onTriggerUp, false)
+    this.addEventListener('triggerchange', this._onSqueezeChange, false)
+    this.addEventListener('gripchange', this._onSqueezeChange, false)
     this.addEventListener('positionchange', this._onPositionChange, false)
     this.addEventListener('quaternionchange', this._onQuaternionChange, false)
   }
@@ -77,11 +95,7 @@ export default class TouchControls extends Object3D {
   }
 
   getButtonState (button) {
-    if (button === 'thumbpad') return this.thumbpadIsPressed
-    if (button === 'trigger') return this.triggerIsPressed
-    if (button === 'grips') return this.gripsArePressed
-    if (button === 'menu') return this.menuIsPressed
-    return false
+    return !!this[`${button}IsPressed`]
   }
 
   update () {
@@ -121,28 +135,20 @@ export default class TouchControls extends Object3D {
       if (this.axes[0] !== axis0 || this.axes[1] !== axis1) {
         this.axes[0] = axis0
         this.axes[1] = axis1
-        this.dispatchEvent({ type: 'axischanged', axes: this.axes })
+        this.dispatchEvent({ type: 'axischange', axes: this.axes })
       }
 
-      if (this.thumbpadIsPressed !== gamepad.buttons[0].pressed) {
-        this.thumbpadIsPressed = gamepad.buttons[0].pressed
-        this.dispatchEvent({ type: this.thumbpadIsPressed ? 'thumbpaddown' : 'thumbpadup' })
-      }
-
-      if (this.triggerIsPressed !== gamepad.buttons[1].pressed) {
-        this.triggerIsPressed = gamepad.buttons[1].pressed
-        this.dispatchEvent({ type: this.triggerIsPressed ? 'triggerdown' : 'triggerup' })
-      }
-
-      if (this.gripsArePressed !== gamepad.buttons[2].pressed) {
-        this.gripsArePressed = gamepad.buttons[2].pressed
-        this.dispatchEvent({ type: this.gripsArePressed ? 'gripsdown' : 'gripsup' })
-      }
-
-      if (this.menuIsPressed !== gamepad.buttons[3].pressed) {
-        this.menuIsPressed = gamepad.buttons[3].pressed
-        this.dispatchEvent({ type: this.menuIsPressed ? 'menudown' : 'menuup' })
-      }
+      // { pressed: boolean, touched: boolean, value: number }
+      Object.entries(BUTTON_MAP).forEach(([index, name]) => {
+        if (this[`${name}IsPressed`] !== gamepad.buttons[index].pressed) {
+          this[`${name}IsPressed`] = gamepad.buttons[index].pressed
+          this.dispatchEvent({ type: this[`${name}IsPressed`] ? `${name}down` : `${name}up` })
+        }
+        if (this[`${name}Value`] !== gamepad.buttons[index].value) {
+          this[`${name}Value`] = gamepad.buttons[index].value
+          this.dispatchEvent({ type: `${name}change` })
+        }
+      })
     } else {
       this.visible = false
     }
@@ -186,13 +192,25 @@ export default class TouchControls extends Object3D {
     }
   }
 
-  _onTriggerDown = () => {
+  _onSqueezeDown = () => {
     this._updateRaycaster()
     this._handleDragStart()
   }
 
-  _onTriggerUp = () => {
+  _onSqueezeUp = () => {
     this._handleDragEnd()
+  }
+
+  _onSqueezeChange = () => {
+    const squeezeValue = Math.max(this.gamepad.buttons[1].value, this.gamepad.buttons[2].value)
+    const scale = 1 - Math.min(squeezeValue / SQUEEZE_THRESHOLD, 1)
+    this.ball.scale.set(scale, scale, scale)
+    if (this.squeezeValue < SQUEEZE_THRESHOLD && squeezeValue >= SQUEEZE_THRESHOLD) {
+      this._onSqueezeDown()
+    } else if (this.squeezeValue > SQUEEZE_THRESHOLD && squeezeValue <= SQUEEZE_THRESHOLD) {
+      this._onSqueezeUp()
+    }
+    this.squeezeValue = squeezeValue
   }
 
   _onPositionChange = () => {

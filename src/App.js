@@ -1,5 +1,5 @@
 import { Body, LockConstraint, World } from 'cannon'
-import { BoxGeometry, Clock, Mesh, Object3D, PerspectiveCamera } from 'three'
+import { Clock, Object3D, PerspectiveCamera } from 'three'
 import VRButton from './VRButton'
 import buildScene from './buildScene'
 import DragControls from './DragControls'
@@ -216,8 +216,6 @@ export default class App {
       touch.addEventListener('drag', App._onDrag)
       touch.addEventListener('dragend', App._onDragEnd)
       touch.addEventListener('rotate', App._onRotate)
-      const box = new Mesh(new BoxGeometry(0.02, 0.02, 0.02))
-      touch.add(box)
       dolly.add(touch)
       return touch
     })
