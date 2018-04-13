@@ -8,8 +8,9 @@ const MAT_FIXTURE = DEBUG ?
   new MeshToonMaterial({ color: 0x808080 })
 
 export default class Fixture extends Object3D {
-  static create (meshGeometries, bodyGeometries) {
+  static create (name, meshGeometries, bodyGeometries) {
     const object = new Fixture()
+    object.name = name
 
     // Add meshes to the object
     meshGeometries.forEach((geometry) => {

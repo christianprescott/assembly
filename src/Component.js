@@ -8,8 +8,9 @@ const MAT_COMPONENT = DEBUG ?
   new MeshToonMaterial({ color: 0xff0000 })
 
 export default class Component extends Object3D {
-  static create (meshGeometries, bodyGeometries) {
+  static create (name, meshGeometries, bodyGeometries) {
     const object = new Component()
+    object.name = name
 
     // Add meshes to the object
     meshGeometries.forEach((geometry) => {

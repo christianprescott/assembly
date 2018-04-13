@@ -27,10 +27,10 @@ export default class Assembly {
     function toReducer (Type) {
       return (acc, [name, c]) => {
         const { objects, set } = acc
+        if (objects[name]) throw new Error(`duplicate object with name "${name}"`)
         const meshes = c.meshes.map(toGeometry)
         const bodies = c.bodies.map(toGeometry)
-        const object = Type.create(meshes, bodies)
-        if (objects[name]) throw new Error(`duplicate object with name "${name}"`)
+        const object = Type.create(name, meshes, bodies)
         objects[name] = object
         set.push(object)
         return acc
