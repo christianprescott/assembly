@@ -10,6 +10,8 @@ function _createCanvas (parent) {
   container.style.position = 'relative'
 
   const canvas = document.createElement('canvas')
+  canvas.style.width = '100%'
+  canvas.style.height = '100%'
   canvas.style.position = 'absolute'
 
   container.appendChild(canvas)

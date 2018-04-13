@@ -19,7 +19,14 @@ export default class App {
   world = null
 
   constructor (parent) {
-    this.renderer = new ResponsiveRenderer(parent)
+    // Additional container to position VRButton on top of canvas
+    const container = document.createElement('div')
+    container.style.width = '100%'
+    container.style.height = '100%'
+    container.style.position = 'relative'
+    parent.appendChild(container)
+
+    this.renderer = new ResponsiveRenderer(container)
     this.renderer.shadowMap.enabled = true
     this.scene = buildScene()
     this._initPancake()
@@ -28,7 +35,7 @@ export default class App {
     this.world.gravity.set(0, 0, 0)
     this.world.allowSleep = true
 
-    const vrButton = new VRButton(parent, this.renderer)
+    const vrButton = new VRButton(container, this.renderer)
     vrButton.addEventListener('enter', this._onVRPresent)
     vrButton.addEventListener('exit', this._onVRExit)
   }
