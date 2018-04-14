@@ -138,14 +138,6 @@ export default class CameraControls {
     this.updateQuatInverse = this.updateQuat.clone().inverse()
 
     this.domElement = (domElement !== undefined) ? domElement : document
-    this.domElement.addEventListener('contextmenu', this.onContextMenu, false)
-    this.domElement.addEventListener('mousedown', this.onMouseDown, false)
-    this.domElement.addEventListener('wheel', this.onMouseWheel, false)
-    this.domElement.addEventListener('touchstart', this.onTouchStart, false)
-    this.domElement.addEventListener('touchend', this.onTouchEnd, false)
-    this.domElement.addEventListener('touchmove', this.onTouchMove, false)
-    document.addEventListener('pointerlockchange', this.onPointerLockChange, false)
-    window.addEventListener('keydown', this.onKeyDown, false)
 
     this.saveState()
     this._update()
@@ -154,6 +146,17 @@ export default class CameraControls {
   //
   // public methods
   //
+
+  activate () {
+    this.domElement.addEventListener('contextmenu', this.onContextMenu, false)
+    this.domElement.addEventListener('mousedown', this.onMouseDown, false)
+    this.domElement.addEventListener('wheel', this.onMouseWheel, false)
+    this.domElement.addEventListener('touchstart', this.onTouchStart, false)
+    this.domElement.addEventListener('touchend', this.onTouchEnd, false)
+    this.domElement.addEventListener('touchmove', this.onTouchMove, false)
+    document.addEventListener('pointerlockchange', this.onPointerLockChange, false)
+    window.addEventListener('keydown', this.onKeyDown, false)
+  }
 
   getPolarAngle () {
     return this.spherical.phi
@@ -252,7 +255,7 @@ export default class CameraControls {
     return false
   }
 
-  dispose () {
+  deactivate () {
     this.domElement.removeEventListener('contextmenu', this.onContextMenu, false)
     this.domElement.removeEventListener('mousedown', this.onMouseDown, false)
     this.domElement.removeEventListener('wheel', this.onMouseWheel, false)
@@ -264,6 +267,11 @@ export default class CameraControls {
     document.removeEventListener('pointerlockchange', this.onPointerLockChange, false)
     window.removeEventListener('keydown', this.onKeyDown, false)
     // this.dispatchEvent( { type: 'dispose' } ); // should this be added here?
+  }
+
+  dispose () {
+    Object.values(this._listeners || {}).forEach(v => v.splice(0, v.length))
+    this.deactivate()
   }
 
   getAutoRotationAngle () {

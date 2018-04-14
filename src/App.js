@@ -6,17 +6,23 @@ import DragControls from './DragControls'
 import CameraControls from './CameraControls'
 import ResponsiveRenderer from './ResponsiveRenderer'
 import RotateControls from './RotateControls'
-import TouchControls from './TouchControls'
+import VRControls from './VRControls'
 import { toCannon, toThree } from './scale'
 
 export default class App {
   assembly = null
-  camera = null
   clock = new Clock(false)
-  controls = []
   renderer = null
   scene = null
   world = null
+
+  // Controls state management
+  pancakeCamera = new PerspectiveCamera(45, 1, 0.05, 40)
+  pancakeControls = []
+  vrCamera = new PerspectiveCamera(45, 1, 0.05, 40)
+  vrControls = []
+  camera = this.pancakeCamera
+  controls = this.pancakeControls
 
   constructor (parent) {
     // Additional container to position VRButton on top of canvas
@@ -29,20 +35,23 @@ export default class App {
     this.renderer = new ResponsiveRenderer(container)
     this.renderer.shadowMap.enabled = true
     this.scene = buildScene()
-    this._initPancake()
 
     this.world = new World()
     this.world.gravity.set(0, 0, 0)
     this.world.allowSleep = true
 
-    const vrButton = new VRButton(container, this.renderer)
-    vrButton.addEventListener('enter', this._onVRPresent)
-    vrButton.addEventListener('exit', this._onVRExit)
+    // VRButton lives outside this.controls because it is never disposed
+    this.vrButton = new VRButton(container, this.renderer)
+    this.vrButton.addEventListener('enter', this._onVRPresent)
+    this.vrButton.addEventListener('exit', this._onVRExit)
   }
 
   load (assembly) {
-    const { camera, scene, renderer, world } = this
+    const { scene, renderer, world } = this
 
+    // enforcing this ensures controls initialized with the new assembly get
+    // activated on start - one less state change to manage
+    if (this.clock.running) throw new Error('must be stopped before loading new assembly')
     if (this.assembly) this._unload(this.assembly)
 
     assembly.components.forEach((c) => {
@@ -70,23 +79,30 @@ export default class App {
       world.addBody(f.body)
     })
 
-    // TODO: include these in controls disabled for VR
-    // TODO: initialize these and other controls only on start
-    this.dragControls = new DragControls(assembly.components, camera, renderer.domElement)
-    this.dragControls.addEventListener('dragstart', this._onDragStart)
-    this.dragControls.addEventListener('drag', this._onDrag)
-    this.dragControls.addEventListener('dragend', this._onDragEnd)
-    this.rotateControls = new RotateControls(assembly.components, camera, renderer.domElement)
-    this.rotateControls.addEventListener('rotatestart', this._onDragStart)
-    this.rotateControls.addEventListener('rotate', this._onRotate)
-    this.rotateControls.addEventListener('rotateend', this._onDragEnd)
+    this._initPancake({ assembly, renderer, scene }).forEach(c => this.pancakeControls.push(c))
+    this._initVR({ assembly, renderer, scene }).forEach(c => this.vrControls.push(c))
 
     this.assembly = assembly
   }
 
   start () {
+    if (!this.assembly) throw new Error('assembly must be loaded before start')
+
+    this.vrButton.activate()
+    this.controls.forEach(c => c.activate())
     this.clock.start()
     this.renderer.animate(this._animate)
+  }
+
+  stop () {
+    this.renderer.animate(null)
+    this.clock.stop()
+    this.controls.forEach(c => c.deactivate())
+    this.vrButton.deactivate()
+  }
+
+  render () {
+    this._render()
   }
 
   fullscreen () {
@@ -98,14 +114,8 @@ export default class App {
   _unload (assembly) {
     const { scene, world } = this
 
-    this.dragControls.removeEventListener('dragstart', this._onDragStart)
-    this.dragControls.removeEventListener('drag', this._onDrag)
-    this.dragControls.removeEventListener('dragend', this._onDragEnd)
-    this.dragControls.deactivate()
-    this.rotateControls.removeEventListener('rotatestart', this._onDragStart)
-    this.rotateControls.removeEventListener('rotate', this._onRotate)
-    this.rotateControls.removeEventListener('rotateend', this._onDragEnd)
-    this.rotateControls.deactivate()
+    this.pancakeControls.splice(0, this.pancakeControls.length).forEach(c => c.dispose())
+    this.vrControls.splice(0, this.pancakeControls.length).forEach(c => c.dispose())
 
     assembly.fixtures.forEach((f) => {
       scene.remove(f)
@@ -184,44 +194,58 @@ export default class App {
     this.dispatchEvent({ type: 'rotate', component })
   }
 
-  // TODO: this state toggle is in desperate need of refactor
   _onVRPresent = () => {
-    this.controls.forEach(c => c.dispose())
-    this._initVR()
+    this.controls.forEach(c => c.deactivate())
+    this.controls = this.vrControls
+    this.camera = this.vrCamera
+    this.controls.forEach(c => c.activate())
+    this.scene.userData.floor.visible = true
   }
 
   _onVRExit = () => {
-    this.controls.forEach(c => c.dispose())
-    this.camera.parent.parent.remove(this.camera.parent)
-    this._initPancake()
+    this.controls.forEach(c => c.deactivate())
+    this.controls = this.pancakeControls
+    this.camera = this.pancakeCamera
+    this.controls.forEach(c => c.activate())
+    this.scene.userData.floor.visible = false
   }
 
-  _initPancake () {
-    // TODO: dispose previous VR controls
-    const camera = new PerspectiveCamera(45, 1, 0.05, 40)
+  _initPancake ({ assembly, renderer }) {
+    const camera = this.pancakeCamera
     camera.up.set(0, 0, 1)
     camera.position.set(0, -0.5, 0.5)
     camera.rotation.set(Math.PI / 2, 0, 0)
-    const cameraControls = new CameraControls(camera, this.renderer.domElement)
+    const cameraControls = new CameraControls(camera, renderer.domElement)
     cameraControls.enablePan = false
-    this.scene.userData.floor.visible = false
-    this.controls = [cameraControls]
-    this.camera = camera
+
+    const dragControls = new DragControls(assembly.components, camera, renderer.domElement)
+    dragControls.addEventListener('dragstart', this._onDragStart)
+    dragControls.addEventListener('drag', this._onDrag)
+    dragControls.addEventListener('dragend', this._onDragEnd)
+    const rotateControls = new RotateControls(assembly.components, camera, renderer.domElement)
+    rotateControls.addEventListener('rotatestart', this._onDragStart)
+    rotateControls.addEventListener('rotate', this._onRotate)
+    rotateControls.addEventListener('rotateend', this._onDragEnd)
+
+    return [cameraControls, dragControls, rotateControls]
   }
 
-  _initVR () {
+  _initVR ({ assembly, scene }) {
     const dolly = new Object3D()
+    // TODO: remove this dolly from the scene when disposed
+    scene.add(dolly)
+
     // TODO: set antialias, setPixelRatio, setSize, userHeight, standingMatrix
     // TODO: events: resize vrdisplaypointerrestricted vrdisplaypointerunrestricted
     // TODO: consider FOV changes
-    const camera = new PerspectiveCamera(45, 1, 0.05, 40)
+    const camera = this.vrCamera
     dolly.up.set(0, 0, 1)
     dolly.position.set(0, -0.5, 0.5)
     dolly.rotation.set(Math.PI / 2, 0, 0)
     dolly.add(camera)
 
     const [touchL, touchR] = [0, 1].map((index) => {
-      const touch = new TouchControls(index, this.assembly.components)
+      const touch = new VRControls(index, assembly.components)
       touch.addEventListener('dragstart', this._onDragStart)
       touch.addEventListener('drag', this._onDrag)
       touch.addEventListener('dragend', this._onDragEnd)
@@ -230,10 +254,7 @@ export default class App {
       return touch
     })
 
-    this.scene.add(dolly)
-    this.scene.userData.floor.visible = true
-    this.controls = [touchL, touchR]
-    this.camera = camera
+    return [touchL, touchR]
   }
 }
 

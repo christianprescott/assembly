@@ -28,11 +28,16 @@ function _createElement () {
 
 export default class VRButton {
   renderer = null
+  _activate = Function.prototype
+  _deactivate = Function.prototype
 
   constructor (parent, renderer) {
     if ('getVRDisplays' in navigator) {
       this.button = _createElement()
-      parent.appendChild(this.button)
+      this._activate = () => parent.appendChild(this.button)
+      this._deactivate = () => {
+        if (parent.contains(this.button)) parent.removeChild(this.button)
+      }
 
       window.addEventListener('vrdisplayconnect', this._vrDisplayConnect, false)
       window.addEventListener('vrdisplaydisconnect', this._vrDisplayDisconnect, false)
@@ -49,6 +54,21 @@ export default class VRButton {
     }
 
     this.renderer = renderer
+  }
+
+  activate () {
+    this._activate()
+  }
+
+  deactivate () {
+    // TODO: This doesn't behave like the other controls. Should probably also
+    // disable renderer.vr and exitPresent here or dispose
+    this._deactivate()
+  }
+
+  dispose () {
+    Object.values(this._listeners || {}).forEach(v => v.splice(0, v.length))
+    this.deactivate()
   }
 
   // TODO: implement dispose

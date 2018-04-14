@@ -59,7 +59,6 @@
     <script>
       const container = document.getElementById('container')
       const app = new assembly.App(container)
-      app.start()
 
       function loadScene(scene) {
         const objRequest = new XMLHttpRequest()
@@ -68,7 +67,9 @@
         configRequest.open('GET', `examples/${scene}.json`)
         configRequest.responseType = 'json'
         configRequest.onload = function () {
+          app.stop()
           app.load(assembly.Assembly.create(objRequest.response, configRequest.response))
+          app.start()
         }
         objRequest.onload = function () {
           configRequest.send()

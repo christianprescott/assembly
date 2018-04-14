@@ -35,7 +35,6 @@ export default class RotateControls {
     this._objects = _objects
     this._camera = _camera
     this._domElement = _domElement
-    this.activate()
   }
 
   activate () {
@@ -53,7 +52,13 @@ export default class RotateControls {
   }
 
   dispose () {
+    Object.values(this._listeners || {}).forEach(v => v.splice(0, v.length))
     this.deactivate()
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  update () {
+    // nothing to do here, updated by events
   }
 
   //

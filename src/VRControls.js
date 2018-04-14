@@ -85,9 +85,18 @@ export default class TouchControls extends Object3D {
     this.addEventListener('quaternionchange', this._onQuaternionChange, false)
   }
 
-  // eslint-disable-next-line class-methods-use-this
+  deactivate () {
+    this.removeEventListener('triggerchange', this._onSqueezeChange, false)
+    this.removeEventListener('gripchange', this._onSqueezeChange, false)
+    this.removeEventListener('positionchange', this._onPositionChange, false)
+    this.removeEventListener('quaternionchange', this._onQuaternionChange, false)
+  }
+
   dispose () {
     // TODO: anything to do here? I believe it all happens on update
+    // TODO: remove from scene?
+    Object.values(this._listeners || {}).forEach(v => v.splice(0, v.length))
+    this.deactivate()
   }
 
   getGamepad () {
