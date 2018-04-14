@@ -14,10 +14,11 @@ export default class Fixture extends Object3D {
 
     // Add meshes to the object
     meshGeometries.forEach((geometry) => {
-      const mesh = new Mesh(geometry, MAT_FIXTURE)
+      const mesh = new Mesh(geometry, MAT_FIXTURE.clone())
       mesh.castShadow = true
       mesh.receiveShadow = true
       object.add(mesh)
+      object.meshes.push(mesh)
     })
 
     // Position geometries around object center
@@ -54,11 +55,6 @@ export default class Fixture extends Object3D {
     return object
   }
 
-  constructor () {
-    super()
-
-    this.body = new Body({
-      mass: 0,
-    })
-  }
+  meshes = []
+  body = new Body({ mass: 0 })
 }

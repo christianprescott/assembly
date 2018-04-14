@@ -14,10 +14,11 @@ export default class Component extends Object3D {
 
     // Add meshes to the object
     meshGeometries.forEach((geometry) => {
-      const mesh = new Mesh(geometry, MAT_COMPONENT)
+      const mesh = new Mesh(geometry, MAT_COMPONENT.clone())
       mesh.castShadow = true
       mesh.receiveShadow = true
       object.add(mesh)
+      object.meshes.push(mesh)
     })
 
     // Position geometries around object center
@@ -55,17 +56,16 @@ export default class Component extends Object3D {
     return object
   }
 
+  meshes = []
+  links = []
+  body = new Body({ angularDamping: 0.8, mass: 5 })
+  dragBody = new Body()
+
   constructor () {
     super()
 
-    this.links = []
-    this.body = new Body({
-      angularDamping: 0.8,
-      mass: 5,
-    })
     // Link Component for reference from events
     this.body.component = this
-    this.dragBody = new Body()
   }
 
   testLinks () {
