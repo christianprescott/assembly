@@ -2,6 +2,7 @@ import { Box } from 'cannon'
 import { Geometry, Vector3 } from 'three'
 import shapes from '../../test/fixtures/shapes'
 import shapeFromGeometry from '../shapeFromGeometry'
+import { toThree } from '../scale'
 
 function round (v) {
   // default precision is 1e-6
@@ -42,7 +43,7 @@ describe('shapeFromGeometry', function () {
 
     it('sizes extents', function () {
       unorderedEql(
-        shape.halfExtents.toArray().map(round),
+        toThree(shape.halfExtents).toArray().map(round),
         expectedExtents.toArray().map(round).map(v => v / 2),
       )
     })
@@ -50,7 +51,7 @@ describe('shapeFromGeometry', function () {
     it('orients', function () {
       const vertices = shape.convexPolyhedronRepresentation.vertices
         .map(v => orientation.vmult(v))
-        .map(v => v.toArray().map(round))
+        .map(v => toThree(v).toArray().map(round))
 
       const g = new Geometry().fromBufferGeometry(geometry)
       g.mergeVertices()
