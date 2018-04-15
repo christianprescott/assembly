@@ -74,11 +74,10 @@ export default class TouchControls extends Object3D {
     this.standingMatrix = new Matrix4()
     this._objects = _objects
     this.ball = new Mesh(new SphereGeometry(0.02, 8, 8))
-    this.add(this.ball)
-    this.activate()
   }
 
   activate () {
+    this.add(this.ball)
     this.addEventListener('triggerchange', this._onSqueezeChange, false)
     this.addEventListener('gripchange', this._onSqueezeChange, false)
     this.addEventListener('positionchange', this._onPositionChange, false)
@@ -86,6 +85,7 @@ export default class TouchControls extends Object3D {
   }
 
   deactivate () {
+    this.remove(this.ball)
     this.removeEventListener('triggerchange', this._onSqueezeChange, false)
     this.removeEventListener('gripchange', this._onSqueezeChange, false)
     this.removeEventListener('positionchange', this._onPositionChange, false)
@@ -93,8 +93,7 @@ export default class TouchControls extends Object3D {
   }
 
   dispose () {
-    // TODO: anything to do here? I believe it all happens on update
-    // TODO: remove from scene?
+    // TODO: remove this from scene?
     Object.values(this._listeners || {}).forEach(v => v.splice(0, v.length))
     this.deactivate()
   }

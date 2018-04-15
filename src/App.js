@@ -216,9 +216,12 @@ export default class App {
   _initPancake ({ assembly, renderer }) {
     const camera = this.pancakeCamera
     camera.up.set(0, 0, 1)
-    camera.position.set(0, -0.5, 0.5)
-    camera.rotation.set(Math.PI / 2, 0, 0)
+    const box = assembly.boundingBox
+    camera.position.set(box.min.x, box.min.y, box.max.z).multiplyScalar(2)
     const cameraControls = new CameraControls(camera, renderer.domElement)
+    box.getCenter(cameraControls.target)
+    // camera requires manual update after setting target
+    cameraControls._update()
     cameraControls.enablePan = false
     if (this.options.readOnly) return [cameraControls]
 
@@ -241,7 +244,6 @@ export default class App {
 
     // TODO: set antialias, setPixelRatio, setSize, userHeight, standingMatrix
     // TODO: events: resize vrdisplaypointerrestricted vrdisplaypointerunrestricted
-    // TODO: consider FOV changes
     const camera = this.vrCamera
     dolly.up.set(0, 0, 1)
     dolly.position.set(0, -0.5, 0.5)

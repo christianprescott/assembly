@@ -1,5 +1,5 @@
 import 'three/examples/js/loaders/OBJLoader'
-import { OBJLoader } from 'three'
+import { Box3, OBJLoader } from 'three'
 import Component from './Component'
 import Fixture from './Fixture'
 import Link from './Link'
@@ -52,7 +52,10 @@ export default class Assembly {
     return new Assembly(fixtures, components)
   }
 
+  boundingBox = new Box3()
+
   constructor (fixtures, components) {
+    fixtures.concat(components).forEach(o => this.boundingBox.expandByObject(o))
     Object.assign(this, { fixtures, components })
   }
 }
