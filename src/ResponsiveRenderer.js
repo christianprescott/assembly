@@ -37,7 +37,7 @@ export default class ResponsiveRenderer extends WebGLRenderer {
   // private
 
   _subRender (scene, camera) {
-    this._resize(this.container, camera)
+    if (!this.vr.enabled) this._resize(this.container, camera) // :(
     return this._superRender(scene, camera)
   }
 
