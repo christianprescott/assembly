@@ -194,6 +194,7 @@ export default class App {
     const component = event.object
     const { dragBody, quaternion } = component
     dragBody.quaternion.set(...quaternion.toArray())
+    component.testLinks()
     this.dispatchEvent({ type: 'rotate', component })
   }
 

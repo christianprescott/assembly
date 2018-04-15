@@ -108,9 +108,9 @@ export default class Link extends Object3D {
       this.arc.geometry.verticesNeedUpdate = true
       this.arc.quaternion.setFromAxisAngle(new Vector3(0, 0, 1).cross(axis), Math.PI / 2)
 
-      this.arrowMesh.material = distance < 0.01 ? MAT_ARROW_LINKED : MAT_ARROW
-      this.arc.material = angle < 0.05 ? MAT_ARROW_LINKED : MAT_ARROW
+      this.arrowMesh.material = distance < 0.02 ? MAT_ARROW_LINKED : MAT_ARROW
+      this.arc.material = angle < Math.PI / 18 ? MAT_ARROW_LINKED : MAT_ARROW
     }
-    return distance < 0.01 && angle < 0.05
+    return distance < 0.02 && angle < Math.PI / 18
   }
 }
