@@ -12,6 +12,7 @@ import { toCannon, toThree } from './scale'
 export default class App {
   assembly = null
   clock = new Clock(false)
+  options = {}
   renderer = null
   scene = null
   world = null
@@ -24,7 +25,9 @@ export default class App {
   camera = this.pancakeCamera
   controls = this.pancakeControls
 
-  constructor (parent) {
+  constructor (parent, options = {}) {
+    this.options = options
+
     // Additional container to position VRButton on top of canvas
     const container = document.createElement('div')
     container.style.width = '100%'
@@ -217,6 +220,7 @@ export default class App {
     camera.rotation.set(Math.PI / 2, 0, 0)
     const cameraControls = new CameraControls(camera, renderer.domElement)
     cameraControls.enablePan = false
+    if (this.options.readOnly) return [cameraControls]
 
     const dragControls = new DragControls(assembly.components, camera, renderer.domElement)
     dragControls.addEventListener('dragstart', this._onDragStart)
@@ -243,6 +247,7 @@ export default class App {
     dolly.position.set(0, -0.5, 0.5)
     dolly.rotation.set(Math.PI / 2, 0, 0)
     dolly.add(camera)
+    if (this.options.readOnly) return []
 
     const [touchL, touchR] = [0, 1].map((index) => {
       const touch = new VRControls(index, assembly.components)
