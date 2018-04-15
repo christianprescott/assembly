@@ -48,9 +48,9 @@
 ## v0.8.0
 - [x] event emitter
 - [x] camera position and orbit at assembly bounds and center
-- [ ] shuffle components
 
 ## Backlog
+- [ ] shuffle components
 - [ ] group linked components, additional grab handle appears for group
 - [ ] body shapes, sphere, all vertices (max - min) distance from center of bounding box
 - [ ] body shapes, cylinder

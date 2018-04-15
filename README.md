@@ -1,5 +1,24 @@
 # Assembly
 
+Assembly is a small engine for positioning pieces of something in 3D space. It
+allows you to specify the "components" involved and the links between them, then
+renders the scene in the element of your choice. Controls are available for
+mouse and keyboard, touch, and WebVR.
+
+TODO: one *glaring* omission right now - components are not shuffled from their
+original correct positions.
+
+To use Assembly in your app first `npm install assembly-app` then
+
+```
+import { App, Assembly } from 'assembly-app'
+const app = new App(domElement)
+app.load(Assembly.create(obj, config))
+app.start()
+```
+
+See [Scene Configuration](#scene-configuration) for more on `Assembly.create`.
+
 ## Build
 
 Set the `ASSEMBLY_DEBUG` environment variable to build in debug mode. Bodies are
@@ -7,9 +26,9 @@ rendered in wireframe and link distance is visible.
 
 ```sh
 npm install
-npm run build
-cd dist && python -m SimpleHTTPServer 8080 # or whatever
-open http://localhost:8080
+npx webpack
+python -m SimpleHTTPServer 8080 # or whatever
+open http://localhost:8080/dist
 ```
 
 ## Test
