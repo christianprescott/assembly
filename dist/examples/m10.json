@@ -1,0 +1,40 @@
+{
+  "components": {
+    "Block" : {
+      "meshes": ["Block"],
+      "bodies": ["Block_Body.000", "Block_Body.001", "Block_Body.002", "Block_Body.003", "Block_Body.004", "Block_Body.005", "Block_Body.006"]
+    },
+    "Crankshaft" : {
+      "meshes": ["Crankshaft"],
+      "bodies": ["Crankshaft"]
+    },
+    "Fan" : {
+      "meshes": ["Fan"],
+      "bodies": ["Fan"]
+    },
+    "Oilpan" : {
+      "meshes": ["Oilpan"],
+      "bodies": ["Oilpan"]
+    },
+    "Piston.000" : {
+      "meshes": ["Piston.000"],
+      "bodies": ["Piston_Body.000", "Piston_Body.001"]
+    },
+    "Piston.001" : {
+      "meshes": ["Piston.001_Piston.000"],
+      "bodies": ["Piston_Body.002_Piston_Body.001", "Piston_Body.003_Piston_Body.000"]
+    },
+    "Piston.002" : {
+      "meshes": ["Piston.002_Piston.000"],
+      "bodies": ["Piston_Body.004_Piston_Body.000", "Piston_Body.005_Piston_Body.001"]
+    },
+    "Piston.003" : {
+      "meshes": ["Piston.003_Piston.000"],
+      "bodies": ["Piston_Body.006_Piston_Body.001", "Piston_Body.007_Piston_Body.000"]
+    }
+  },
+  "fixtures": {
+  },
+  "links": [
+  ]
+}
