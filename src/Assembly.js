@@ -31,6 +31,7 @@ export default class Assembly {
         const meshes = c.meshes.map(toGeometry)
         const bodies = c.bodies.map(toGeometry)
         const object = Type.create(name, meshes, bodies)
+        if (c.color) object.meshes.forEach((m, i) => m.material.color.set(c.color[i]))
         objects[name] = object
         set.push(object)
         return acc

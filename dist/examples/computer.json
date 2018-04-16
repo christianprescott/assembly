@@ -2,20 +2,27 @@
   "components": {
     "CPU" : {
       "meshes": ["CPU"],
-      "bodies": ["CPU"]
+      "bodies": ["CPU"],
+      "color": ["#bbb"]
+    },
+    "CPU Fan" : {
+      "meshes": ["CPU.Fan", "CPU.Fan.Heatsink"],
+      "bodies": ["CPU.Fan.Body"],
+      "color": ["#111", "#999"]
     },
     "GPU" : {
-      "meshes": ["GPU", "GPU.Heatsink", "GPU.Fan"],
+      "meshes": ["GPU.Board", "GPU", "GPU.Heatsink", "GPU.Fan"],
       "bodies": [
         "GPU.Body.Card",
-        "GPU.Body.Pins",
         "GPU.Body.Ports"
-      ]
+      ],
+      "color": ["#040", "#999", "#999", "#111"]
     }
   },
   "fixtures": {
     "Mainboard" : {
-      "meshes": ["Mainboard"],
+      "meshes": ["Mainboard.Board", "Mainboard.Black", "Mainboard"],
+      "color": ["#030", "#222"],
       "bodies": [
         "Mainboard.001",
         "Mainboard.002",
