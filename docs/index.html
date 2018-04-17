@@ -3,13 +3,25 @@
   <head>
     <title>Assembly</title>
     <style>
+      * {
+        font-family: sans-serif;
+      }
       #container {
         height: 400px;
       }
     </style>
   </head>
   <body>
-    <h1>Demo</h1>
+    <h1>Assembly</h1>
+    <div id="container"></div>
+    <p>
+      <label for="assembly">Assembly</label>
+      <select id="assembly">
+        <option value="bricks">Bricks</option>
+        <option value="computer">Computer</option>
+      </select>
+      <button id="fs">Full Screen</button>
+    </p>
     <p>
       <table>
         <tr>
@@ -44,54 +56,22 @@
         </tr>
       </table>
     </p>
-    <div>
-      <label for="assembly">Assembly</label>
-      <select id="assembly">
-        <option value="bricks">Bricks</option>
-        <option value="computer">Computer</option>
-      </select>
-    </div>
-    <div>
-      <button id="fs">Full Screen</button>
-    </div>
-    <div id="container"></div>
-    <script src="../dist/assembly.js"></script>
+    <script src="https://unpkg.com/assembly-app/dist/assembly.min.js"></script>
+    <script src="app.js"></script>
     <script>
-      const container = document.getElementById('container')
-      const app = new assembly.App(container)
-      app.render()
-
-      function loadScene(scene) {
-        const objRequest = new XMLHttpRequest()
-        objRequest.open('GET', `examples/${scene}.obj`)
-        const configRequest = new XMLHttpRequest()
-        configRequest.open('GET', `examples/${scene}.json`)
-        configRequest.responseType = 'json'
-        configRequest.onload = function () {
-          app.load(assembly.Assembly.create(objRequest.response, configRequest.response))
-          app.start()
-        }
-        objRequest.onload = function () {
-          configRequest.send()
-        }
-        objRequest.send()
-      }
+      const app = create('container')
 
       // Load the scene
-      const scene = document.getElementById('assembly').value
-      loadScene(scene)
+      const select = document.getElementById('assembly')
+      load(app, select.value)
 
-      document.getElementById('assembly').addEventListener(
-        'change',
-        function (e) {
-          app.stop()
-          loadScene(e.target.value)
-        }
-      )
-      document.getElementById('fs').addEventListener(
-        'click',
-        function () { app.fullscreen() }
-      )
+      select.addEventListener('change', function (e) {
+        app.stop()
+        load(app, e.target.value)
+      })
+      document.getElementById('fs').addEventListener('click', function () {
+        app.fullscreen()
+      })
     </script>
   </body>
 </html>

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Assembly</title>
+    <style>
+      #container {
+        height: 400px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="container"></div>
+    <script src="../dist/assembly.js"></script>
+    <script src="app.js"></script>
+    <script>
+      const app = create('container')
+
+      const search = window.location.search
+      if (search.length > 0) {
+        const query = search.substr(1).split('&').reduce(function (acc, pair) {
+          const [key, value] = pair.split('=')
+          acc[key] = value || true
+          return acc
+        }, {})
+        load(app, query.example || 'computer')
+      }
+    </script>
+  </body>
+</html>
