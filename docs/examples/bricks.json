@@ -1,18 +1,18 @@
 {
   "components": {
     "Middle" : {
-      "meshes": ["Middle_Cube.001"],
-      "bodies": ["Middle_Cube.001"]
+      "meshes": ["Middle"],
+      "bodies": ["Middle"]
     },
     "Top" : {
-      "meshes": ["Top_Cube.002"],
-      "bodies": ["Top_Cube.002"]
+      "meshes": ["Top"],
+      "bodies": ["Top"]
     }
   },
   "fixtures": {
     "Bottom" : {
-      "meshes": ["Bottom_Cube"],
-      "bodies": ["Bottom_Cube"]
+      "meshes": ["Bottom"],
+      "bodies": ["Bottom"]
     }
   },
   "links": [

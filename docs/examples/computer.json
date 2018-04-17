@@ -4,11 +4,14 @@
       "meshes": ["CPU"],
       "bodies": ["CPU"]
     },
+    "CPU Fan" : {
+      "meshes": ["CPU.Fan"],
+      "bodies": ["CPU.Fan.Body"]
+    },
     "GPU" : {
       "meshes": ["GPU", "GPU.Heatsink", "GPU.Fan"],
       "bodies": [
         "GPU.Body.Card",
-        "GPU.Body.Pins",
         "GPU.Body.Ports"
       ]
     }
