@@ -28,7 +28,7 @@ rendered in wireframe and link distance is visible.
 npm install
 npx webpack
 python -m SimpleHTTPServer 8080 # or whatever
-open http://localhost:8080/dist
+open http://localhost:8080/docs
 ```
 
 ## Test

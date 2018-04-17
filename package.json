@@ -5,10 +5,12 @@
   "main": "lib/index.js",
   "module": "src/index.js",
   "scripts": {
-    "build": "babel src --out-dir lib",
+    "transpile": "babel src --out-dir lib",
+    "build": "WEBPACK_ENV=production webpack",
+    "clean": "rm -rf lib dist",
     "dev": "webpack --watch",
     "lint": "eslint src",
-    "prepublishOnly": "npm run lint && npm run build",
+    "prepublishOnly": "npm run lint && npm run clean && npm run transpile && npm run build",
     "test": "karma start --single-run"
   },
   "author": "me@christianprescott.com",

@@ -1,9 +1,17 @@
 const path = require('path')
+const MinifyPlugin = require('babel-minify-webpack-plugin')
+
+let filename = 'assembly.js'
+const plugins = []
+if (process.env.WEBPACK_ENV === 'production') {
+  filename = 'assembly.min.js'
+  plugins.push(new MinifyPlugin())
+}
 
 module.exports = {
   entry: './src/index.js',
   output: {
-    filename: 'bundle.js',
+    filename: filename,
     library: 'assembly',
     path: path.resolve(__dirname, 'dist')
   },
@@ -29,5 +37,6 @@ module.exports = {
         use: 'imports-loader?THREE=three'
       }
     ]
-  }
+  },
+  plugins
 }

@@ -10,7 +10,7 @@ node_modules/
 jspm_packages/
 
 # Webpack build
-/dist/*.js
+/dist
 # Transpiled source
 /lib
 
