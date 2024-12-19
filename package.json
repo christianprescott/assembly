@@ -19,9 +19,6 @@
     "type": "git",
     "url": "https://github.com/christianprescott/assembly.git"
   },
-  "publishConfig": {
-    "registry": "https://npm.pkg.github.com"
-  },
   "dependencies": {
     "cannon": "github:schteppe/cannon.js",
     "fscreen": "^1.0.2",
